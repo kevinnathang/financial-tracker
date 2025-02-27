@@ -11,6 +11,8 @@ declare global {
     }
 }
 
+export const tokenBlacklist = new Set<string>();
+
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     try {
         // Get token from header
@@ -22,10 +24,16 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
         const token = authHeader.split(' ')[1];
 
         // Verify token
+        if (tokenBlacklist.has(token)) {
+            return res.status(401).json({ message: 'Invalid token' });
+        }
+
+        // Verify token
         const decoded = verify(token, process.env.JWT_SECRET || 'default-secret') as { userId: string };
 
         // Add user info to request
         req.user = decoded;
+        (req as any).token = token
 
         next();
     } catch (error) {
