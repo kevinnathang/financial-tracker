@@ -1,0 +1,50 @@
+services:
+  db:
+    image: postgis/postgis:15-3.3
+    environment:
+      POSTGRES_USER: finance_user
+      POSTGRES_PASSWORD: finance_password
+      POSTGRES_DB: finance_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - finance_net
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "finance_user", "-d", "finance_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - DB_HOST=db
+      - DB_PORT=5432
+      - DB_USER=finance_user
+      - DB_PASSWORD=finance_password
+      - DB_NAME=finance_db
+      - DATABASE_URL=postgresql://finance_user:finance_password@db:5432/finance_db
+    networks:
+      - finance_net
+
+volumes:
+  postgres_data:
+
+
+networks:
+  finance_net:
+    driver: bridge
