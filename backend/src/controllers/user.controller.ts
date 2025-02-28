@@ -1,12 +1,9 @@
-// src/controllers/auth.controller.ts
+// src/controllers/user.controller.ts
 import { Request, Response } from 'express';
-import { AppDataSource } from '../config/database';
-import { User } from '../entities/User';
+import prisma from '../lib/prisma';
 import { hash, compare } from 'bcryptjs';
 import jwt, { Secret, SignOptions } from 'jsonwebtoken';
 import { tokenBlacklist } from '../middleware/auth.middleware';
-
-const userRepository = AppDataSource.getRepository(User);
 
 export class UserController {
     static async createUser(req: Request, res: Response) {
@@ -14,7 +11,7 @@ export class UserController {
             const { email, password, full_name } = req.body;
 
             // Check if user already exists
-            const existingUser = await userRepository.findOne({ where: { email } });
+            const existingUser = await prisma.user.findUnique({ where: { email } });
             if (existingUser) {
                 return res.status(400).json({ message: 'User already exists' });
             }
@@ -23,13 +20,13 @@ export class UserController {
             const hashedPassword = await hash(password, 10);
 
             // Create new user
-            const user = new User();
-            user.email = email;
-            user.password_hash = hashedPassword;
-            user.full_name = full_name;
-
-            // Save user
-            await userRepository.save(user);
+            const user = await prisma.user.create({
+                data: {
+                    email,
+                    password_hash: hashedPassword,
+                    full_name
+                }
+            });
 
             // Generate JWT
             const jwtSecret: Secret = process.env.JWT_SECRET || 'default-secret';
@@ -60,7 +57,7 @@ export class UserController {
             const { email, password } = req.body;
 
             // Find user
-            const user = await userRepository.findOne({ where: { email } });
+            const user = await prisma.user.findUnique({ where: { email } });
             if (!user) {
                 return res.status(401).json({ message: 'Invalid credentials' });
             }
@@ -115,9 +112,10 @@ export class UserController {
 
     static async getUser(req: Request, res: Response) {
         try {
-            const user = await userRepository.findOne({
+            const user = await prisma.user.findUnique({
                 where: { id: req.user?.userId },
             });
+
             if (!user) {
                 return res.status(404).json({ message: 'User not found' });
             }
@@ -137,7 +135,7 @@ export class UserController {
 
     static async getAllUsers(req: Request, res: Response) {
         try {
-            const users = await userRepository.find();
+            const users = await prisma.user.findMany();
             return res.json({ users });
         } catch (error) {
             console.error('Get all users error:', error);
@@ -147,14 +145,18 @@ export class UserController {
 
     static async deleteUser(req: Request, res: Response) {
         try {
-            const user = await userRepository.findOne({
+            const user = await prisma.user.findUnique({
                 where: { id: req.user?.userId },
             });
             if (!user) {
                 return res.status(404).json({ message: 'User not found' });
             }
 
-            await userRepository.remove(user);
+            await prisma.user.delete({
+                where: {
+                    id: req.user?.userId
+                }
+            });
 
             return res.json({ message: 'User deleted' });
         } catch (error) {
@@ -166,18 +168,16 @@ export class UserController {
     static async updateUser(req: Request, res: Response) {
         try {
             const { email, full_name } = req.body;
+            const userId = req.user?.userId;
 
-            const user = await userRepository.findOne({
-                where: { id: req.user?.userId },
+            // Update user
+            const user = await prisma.user.update({
+                where: { id: userId },
+                data: {
+                    email,
+                    full_name
+                }
             });
-            if (!user) {
-                return res.status(404).json({ message: 'User not found' });
-            }
-
-            user.email = email;
-            user.full_name = full_name;
-
-            await userRepository.save(user);
 
             return res.json({
                 message: 'User updated',
@@ -189,6 +189,9 @@ export class UserController {
             });
         } catch (error) {
             console.error('Update user error:', error);
+            if ((error as any).code === 'P2025') {
+                return res.status(404).json({ message: 'User not found' });
+            }
             return res.status(500).json({ message: 'Error updating user' });
         }
     }

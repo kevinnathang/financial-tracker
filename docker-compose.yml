@@ -32,12 +32,9 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=3000
-      - DB_HOST=db
-      - DB_PORT=5432
-      - DB_USER=finance_user
-      - DB_PASSWORD=finance_password
-      - DB_NAME=finance_db
       - DATABASE_URL=postgresql://finance_user:finance_password@db:5432/finance_db
+      - JWT_SECRET=your-super-secret-key-here
+      - JWT_EXPIRES_IN=86400
     networks:
       - finance_net
 

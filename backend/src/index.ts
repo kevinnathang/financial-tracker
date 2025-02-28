@@ -1,9 +1,8 @@
 // src/index.ts
-import 'reflect-metadata';
 import express from 'express';
 import cors from 'cors';
 import { config } from 'dotenv';
-import { AppDataSource } from './config/database';
+import prisma from './lib/prisma';
 import routes from './routes';
 
 // Load environment variables
@@ -14,15 +13,6 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
-
-// Initialize database connection
-AppDataSource.initialize()
-    .then(() => {
-        console.log('Data Source has been initialized!');
-    })
-    .catch((error) => {
-        console.error('Error during Data Source initialization:', error);
-    });
 
 // Routes
 app.use('/v1/api', routes);
@@ -36,6 +26,11 @@ app.get('/health', (req, res) => {
 app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
     console.error(err.stack);
     res.status(500).json({ message: 'Something went wrong!' });
+});
+
+// Handle application shutdown
+process.on('beforeExit', async () => {
+    await prisma.$disconnect();
 });
 
 // Start server

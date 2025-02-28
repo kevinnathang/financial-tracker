@@ -10,6 +10,7 @@
         "type-check": "tsc --noEmit"
     },
     "dependencies": {
+        "@prisma/client": "^6.4.1",
         "bcrypt": "^5.1.1",
         "bcryptjs": "^3.0.2",
         "cors": "^2.8.5",
@@ -28,6 +29,7 @@
         "@typescript-eslint/eslint-plugin": "^6.19.0",
         "@typescript-eslint/parser": "^6.19.0",
         "eslint": "^8.56.0",
+        "prisma": "^6.4.1",
         "ts-node-dev": "^2.0.0",
         "typescript": "^5.3.3"
     }
