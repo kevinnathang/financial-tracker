@@ -43,7 +43,8 @@ export class UserController {
                 user: {
                     id: user.id,
                     email: user.email,
-                    full_name: user.full_name
+                    full_name: user.full_name,
+                    balance: 0
                 }
             });
         } catch (error) {
@@ -124,7 +125,8 @@ export class UserController {
                 user: {
                     id: user.id,
                     email: user.email,
-                    full_name: user.full_name
+                    full_name: user.full_name,
+                    balance: user.balance
                 }
             });
         } catch (error) {

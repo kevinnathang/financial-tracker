@@ -11,14 +11,18 @@ RUN npm install -g ts-node-dev typescript
 
 # Copy package files
 COPY package*.json ./
+COPY prisma ./prisma
 
 # Remove bcrypt and install bcryptjs instead (pure JavaScript implementation)
 RUN npm uninstall bcrypt || true
 RUN npm install bcryptjs
 RUN npm install
 
+RUN npx prisma generate
+
 # Copy source code
 COPY . .
+
 
 # Expose port
 EXPOSE 3000

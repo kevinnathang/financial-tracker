@@ -37,6 +37,7 @@ services:
       - JWT_EXPIRES_IN=86400
     networks:
       - finance_net
+    command: sh -c "npx prisma generate && ts-node-dev --respawn --transpile-only src/index.ts"
 
 volumes:
   postgres_data:

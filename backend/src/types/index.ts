@@ -7,6 +7,7 @@ export interface User {
     id: string;
     email: string;
     password_hash: string;
+    balance: number;
     full_name: string;
     created_at: Date;
     updated_at: Date;
@@ -15,9 +16,8 @@ export interface User {
 export interface Category {
     id: string;
     name: string;
-    type: TransactionType;
     icon?: string;
-    color?: string;
+    color: string;
     created_at: Date;
 }
 
@@ -32,7 +32,7 @@ export interface FinancialGeopoint {
     type: TransactionType;
     location: GeoPoint;
     address?: string;
-    category_id: string;
+    category_id?: string;
     user_id: string;
     created_at: Date;
 }
@@ -40,8 +40,8 @@ export interface FinancialGeopoint {
 export interface Transaction {
     id: string;
     user_id: string;
-    category_id: string;
-    financial_point_id?: string;
+    category_id?: string;
+    financial_geopoint_id?: string;
     amount: number;
     type: TransactionType;
     description?: string;
@@ -52,8 +52,8 @@ export interface Transaction {
 export interface PeriodicTransaction {
     id: string;
     user_id: string;
-    category_id: string;
-    financial_point_id?: string;
+    category_id?: string;
+    financial_geopoint_id?: string;
     amount: number;
     type: TransactionType;
     description?: string;
