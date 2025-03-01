@@ -13,7 +13,7 @@ export interface User {
     updated_at: Date;
 }
 
-export interface Category {
+export interface Tag {
     id: string;
     name: string;
     icon?: string;
@@ -32,7 +32,7 @@ export interface FinancialGeopoint {
     type: TransactionType;
     location: GeoPoint;
     address?: string;
-    category_id?: string;
+    tag_id?: string;
     user_id: string;
     created_at: Date;
 }
@@ -40,7 +40,7 @@ export interface FinancialGeopoint {
 export interface Transaction {
     id: string;
     user_id: string;
-    category_id?: string;
+    tag_id?: string;
     financial_geopoint_id?: string;
     amount: number;
     type: TransactionType;
@@ -52,7 +52,7 @@ export interface Transaction {
 export interface PeriodicTransaction {
     id: string;
     user_id: string;
-    category_id?: string;
+    tag_id?: string;
     financial_geopoint_id?: string;
     amount: number;
     type: TransactionType;
