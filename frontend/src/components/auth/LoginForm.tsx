@@ -2,7 +2,7 @@
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
-import { Box, Button, Stack, Heading, Text, Link } from '@chakra-ui/react';
+import { Box, Button, Stack, Heading, Text, Link, Center } from '@chakra-ui/react';
 import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/form-control';
 import { Input } from '@chakra-ui/input';
 import { useToast } from '@chakra-ui/toast';
@@ -23,7 +23,7 @@ const LoginForm = () => {
     const toast = useToast();
 
     return (
-        <Box p={8} maxWidth="500px" borderWidth={1} borderRadius={8} boxShadow="lg">
+        <Box p={20} maxWidth="500px" borderWidth={0} borderRadius={0} boxShadow="lg">
             <Box textAlign="center">
                 <Heading>Login to Your Account</Heading>
                 <Text mt={4} color="gray.500">Track your finances with ease</Text>
@@ -59,30 +59,54 @@ const LoginForm = () => {
                         <Stack spacing={4} mt={8}>
                             <FormControl isInvalid={!!errors.email && touched.email}>
                                 <FormLabel>Email</FormLabel>
-                                <Field as={Input} id="email" name="email" type="email" />
+                                <Field 
+                                    as={Input} 
+                                    id="email" 
+                                    name="email" 
+                                    type="email"
+                                    borderWidth={1}
+                                    borderColor="black"
+                                    />
                                 <FormErrorMessage>{errors.email}</FormErrorMessage>
                             </FormControl>
 
                             <FormControl isInvalid={!!errors.password && touched.password}>
                                 <FormLabel>Password</FormLabel>
-                                <Field as={Input} id="password" name="password" type="password" />
+                                <Field 
+                                    as={Input} 
+                                    id="password" 
+                                    name="password" 
+                                    type="password" 
+                                    borderWidth={1} 
+                                    borderColor="black"/>
                                 <FormErrorMessage>{errors.password}</FormErrorMessage>
                             </FormControl>
 
-                            <Button
+                            <Box textAlign="center">
+                                <Button
                                 mt={4}
-                                colorScheme="teal"
+                                backgroundColor="#4FD1C5"
+                                color="white"
+                                _hover={{
+                                    backgroundColor: "#319795"
+                                }}
+                                transition="background-color 0.3s ease"
                                 isLoading={isSubmitting}
                                 type="submit"
-                                width="full"
-                            >
+                                width="50%"
+                                >
                                 Login
-                            </Button>
+                                </Button>
+                            </Box>
 
                             <Text mt={4} textAlign="center">
                                 Don't have an account?{" "}
-                                <Link color="teal.500" onClick={() => history.push('/register')}>
-                                    Register
+                                <Link 
+                                    onClick={() => history.push('/register')}
+                                    cursor="pointer"
+                                    fontWeight="bold"
+                                >
+                                Register
                                 </Link>
                             </Text>
                         </Stack>

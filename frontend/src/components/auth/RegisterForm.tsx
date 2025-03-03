@@ -31,7 +31,7 @@ const RegisterForm = () => {
   const toast = useToast();
 
   return (
-    <Box p={8} maxWidth="500px" borderWidth={1} borderRadius={8} boxShadow="lg">
+    <Box p={20} maxWidth="500px" borderWidth={0} borderRadius={0} boxShadow="lg">
       <Box textAlign="center">
         <Heading>Create Your Account</Heading>
         <Text mt={4} color="gray.500">Start tracking your finances today</Text>
@@ -67,41 +67,51 @@ const RegisterForm = () => {
             <Stack spacing={4} mt={8}>
               <FormControl isInvalid={!!errors.full_name && touched.full_name}>
                 <FormLabel>Full Name</FormLabel>
-                <Field as={Input} id="full_name" name="full_name" />
+                <Field as={Input} id="full_name" name="full_name" borderWidth={1} borderColor="black" />
                 <FormErrorMessage>{errors.full_name}</FormErrorMessage>
               </FormControl>
 
               <FormControl isInvalid={!!errors.email && touched.email}>
                 <FormLabel>Email</FormLabel>
-                <Field as={Input} id="email" name="email" type="email" />
+                <Field as={Input} id="email" name="email" type="email" borderWidth={1} borderColor="black" />
                 <FormErrorMessage>{errors.email}</FormErrorMessage>
               </FormControl>
 
               <FormControl isInvalid={!!errors.password && touched.password}>
                 <FormLabel>Password</FormLabel>
-                <Field as={Input} id="password" name="password" type="password" />
+                <Field as={Input} id="password" name="password" type="password" borderWidth={1} borderColor="black" />
                 <FormErrorMessage>{errors.password}</FormErrorMessage>
               </FormControl>
 
               <FormControl isInvalid={!!errors.confirmPassword && touched.confirmPassword}>
                 <FormLabel>Confirm Password</FormLabel>
-                <Field as={Input} id="confirmPassword" name="confirmPassword" type="password" />
+                <Field as={Input} id="confirmPassword" name="confirmPassword" type="password" borderWidth={1} borderColor="black" />
                 <FormErrorMessage>{errors.confirmPassword}</FormErrorMessage>
               </FormControl>
 
-              <Button
-                mt={4}
-                colorScheme="teal"
-                isLoading={isSubmitting}
-                type="submit"
-                width="full"
-              >
-                Register
-              </Button>
-
+              <Box textAlign="center">
+                <Button
+                  mt={4}
+                  backgroundColor="#4FD1C5"
+                  color="white"
+                  _hover={{
+                      backgroundColor: "#319795"
+                  }}
+                  isLoading={isSubmitting}
+                  transition="background-color 0.3s ease"
+                  type="submit"
+                  width="50%"
+                >
+                  Register
+                </Button>
+              </Box>
               <Text mt={4} textAlign="center">
                 Already have an account?{" "}
-                <Link color="teal.500" onClick={() => history.push('/login')}>
+                <Link 
+                  onClick={() => history.push('/login')}
+                  cursor="pointer"
+                  fontWeight="bold"
+                >
                   Login
                 </Link>
               </Text>
