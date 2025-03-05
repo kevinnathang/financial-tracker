@@ -2,10 +2,9 @@
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
-import { Box, Button, Stack, Heading, Text, Link, Center } from '@chakra-ui/react';
+import { Box, Button, Stack, Heading, Text, Link } from '@chakra-ui/react';
 import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/form-control';
 import { Input } from '@chakra-ui/input';
-import { useToast } from '@chakra-ui/toast';
 import { useAuth } from '../../hooks/useAuth';
 import { useHistory } from 'react-router-dom';
 
@@ -20,10 +19,25 @@ const LoginSchema = Yup.object().shape({
 const LoginForm = () => {
     const { login } = useAuth();
     const history = useHistory();
-    const toast = useToast();
+
+    const handleFormSubmit = async (values: any, { setSubmitting }: any) => {
+        try {
+            console.log("Attempting login...");
+            await login(values.email, values.password);
+            console.log("Login successful, showing toast");
+ 
+            history.push('/dashboard');
+        } catch (error) {
+            console.error("Login failed:", error);
+            let errorMessage = "Invalid email or password";
+            return console.log(errorMessage)
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
     return (
-        <Box p={20} maxWidth="500px" borderWidth={0} borderRadius={0} boxShadow="lg">
+        <Box p={8} maxWidth="500px" borderWidth={0} borderRadius={0}>
             <Box textAlign="center">
                 <Heading>Login to Your Account</Heading>
                 <Text mt={4} color="gray.500">Track your finances with ease</Text>
@@ -32,27 +46,7 @@ const LoginForm = () => {
             <Formik
                 initialValues={{ email: '', password: '' }}
                 validationSchema={LoginSchema}
-                onSubmit={async (values, { setSubmitting }) => {
-                    try {
-                        await login(values.email, values.password);
-                        toast({
-                            title: "Login successful",
-                            status: "success",
-                            duration: 3000,
-                            isClosable: true,
-                        });
-                        history.push('/dashboard');
-                    } catch (error: any) {
-                        toast({
-                            title: "Login failed",
-                            description: error.response?.data?.message || "An error occurred",
-                            status: "error",
-                            duration: 5000,
-                            isClosable: true,
-                        });
-                    }
-                    setSubmitting(false);
-                }}
+                onSubmit={handleFormSubmit}
             >
                 {({ isSubmitting, errors, touched }) => (
                     <Form>
@@ -66,7 +60,7 @@ const LoginForm = () => {
                                     type="email"
                                     borderWidth={1}
                                     borderColor="black"
-                                    />
+                                />
                                 <FormErrorMessage>{errors.email}</FormErrorMessage>
                             </FormControl>
 
@@ -78,24 +72,25 @@ const LoginForm = () => {
                                     name="password" 
                                     type="password" 
                                     borderWidth={1} 
-                                    borderColor="black"/>
+                                    borderColor="black"
+                                />
                                 <FormErrorMessage>{errors.password}</FormErrorMessage>
                             </FormControl>
 
                             <Box textAlign="center">
                                 <Button
-                                mt={4}
-                                backgroundColor="#4FD1C5"
-                                color="white"
-                                _hover={{
-                                    backgroundColor: "#319795"
-                                }}
-                                transition="background-color 0.3s ease"
-                                isLoading={isSubmitting}
-                                type="submit"
-                                width="50%"
+                                    mt={4}
+                                    backgroundColor="#4FD1C5"
+                                    color="white"
+                                    _hover={{
+                                        backgroundColor: "#319795"
+                                    }}
+                                    transition="background-color 0.3s ease"
+                                    isLoading={isSubmitting}
+                                    type="submit"
+                                    width="50%"
                                 >
-                                Login
+                                    Login
                                 </Button>
                             </Box>
 
@@ -106,7 +101,7 @@ const LoginForm = () => {
                                     cursor="pointer"
                                     fontWeight="bold"
                                 >
-                                Register
+                                    Register
                                 </Link>
                             </Text>
                         </Stack>

@@ -39,6 +39,7 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
         borderColor="rgb(28, 28, 28)"
         boxShadow="0 10px 25px rgba(0, 0, 0, 0.95)"
         backdropFilter="blur(5px)"
+        zIndex={1}
       >
         {children}
       </Box>
