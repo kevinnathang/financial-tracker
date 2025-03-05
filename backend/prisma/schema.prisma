@@ -16,6 +16,8 @@ model User {
   full_name            String
   created_at           DateTime              @default(now()) @db.Timestamptz(6)
   updated_at           DateTime              @updatedAt @db.Timestamptz(6)
+  resetPasswordToken   String?
+  resetPasswordExpires DateTime?
   
   transactions         Transaction[]
   periodicTransactions PeriodicTransaction[]
