@@ -75,6 +75,15 @@ const LoginForm = () => {
                                     borderColor="black"
                                 />
                                 <FormErrorMessage>{errors.password}</FormErrorMessage>
+                                <Text mt={1} textAlign="right" fontSize="sm">
+                                    <Link 
+                                        onClick={() => history.push('/request-reset-password')}
+                                        cursor="pointer"
+                                        color="blue.500"
+                                    >
+                                        Forgot password?
+                                    </Link>
+                                </Text>
                             </FormControl>
 
                             <Box textAlign="center">

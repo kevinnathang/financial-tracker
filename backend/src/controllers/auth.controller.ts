@@ -66,7 +66,7 @@ export class AuthController {
         }
     }
 
-    static async sendResetPassword(req: Request, res: Response) {
+    static async requestResetPassword(req: Request, res: Response) {
         try {
             const { email } = req.body;
 
@@ -86,11 +86,11 @@ export class AuthController {
                 }
             });
 
-            const resetUrl = `localhost:3000/auth/reset-password/${token}`;
+            const resetUrl = `localhost:3001/reset-password/${token}`;
 
             const msg = {
                 to: email,
-                from: process.env.EMAIL_FROM || 'noreply@yourapp.com',
+                from: process.env.EMAIL_FROM,
                 subject: 'Password Reset Request',
                 html: `
                   <h2>Reset Your Password</h2>
@@ -143,7 +143,7 @@ export class AuthController {
 
             const msg = {
                 to: user.email,
-                from: process.env.EMAIL_FROM || 'noreply@yourapp.com',
+                from: process.env.EMAIL_FROM,
                 subject: 'Password Reset Successful',
                 html: `
                   <h2>Password Reset Successful</h2>

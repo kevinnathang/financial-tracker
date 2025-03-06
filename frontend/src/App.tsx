@@ -5,6 +5,9 @@ import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { AuthProvider } from './context/AuthContext';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import RequestResetPassword from './pages/RequestResetPassword'
+import ResetPassword from './pages/ResetPassword';
+
 import { useAuth } from './hooks/useAuth';
 
 // Create a theme with toast configuration
@@ -47,6 +50,8 @@ const AppRoutes = () => {
     <Switch>
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
+      <Route path="/reset-password/:token" component={ResetPassword} />
+      <Route path="/request-reset-password" component={RequestResetPassword} />
       <Route
         path="/dashboard"
         render={() => (

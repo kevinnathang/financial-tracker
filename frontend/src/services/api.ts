@@ -20,7 +20,7 @@ api.interceptors.request.use(config => {
 
 export const authService = {
     login: async (email: string, password: string) => {
-        const response = await api.post('/user/login', { email, password });
+        const response = await api.post('/auth/login', { email, password });
         return response.data;
     },  
     register: async (email: string, password: string, full_name: string) => {
@@ -31,6 +31,13 @@ export const authService = {
         await api.post('/user/logout');
         localStorage.removeItem('token');
     },
+    requestResetPassword: async (email: string) => {
+        const response = await api.post('/auth/request-reset-password', { email })
+        return response.data
+    },
+    resetPassword: async (token: string, password: string) => {
+        await api.post(`/auth/reset-password/${token}`, { password })
+    }
 };
 
 export default api;
