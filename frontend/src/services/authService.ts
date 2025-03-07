@@ -1,4 +1,4 @@
-// src/services/api.ts
+// src/services/authService.ts
 import axios from 'axios';
 
 const API_URL = 'http://localhost:3000/v1/api';
@@ -23,12 +23,8 @@ export const authService = {
         const response = await api.post('/auth/login', { email, password });
         return response.data;
     },  
-    register: async (email: string, password: string, full_name: string) => {
-        const response = await api.post('/user/register', { email, password, full_name });
-        return response.data;
-    },
     logout: async () => {
-        await api.post('/user/logout');
+        await api.post('/auth/logout');
         localStorage.removeItem('token');
     },
     requestResetPassword: async (email: string) => {

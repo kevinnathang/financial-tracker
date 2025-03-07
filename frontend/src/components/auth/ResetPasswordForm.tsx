@@ -7,7 +7,6 @@ import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/form-contro
 import { Input } from '@chakra-ui/input';
 import { useHistory, useParams } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import { authService } from '../../services/api';
 
 const ResetPasswordSchema = Yup.object().shape({
   password: Yup.string()

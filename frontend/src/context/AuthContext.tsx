@@ -1,6 +1,6 @@
 // src/context/AuthContext.tsx
 import React, { createContext, useState, useEffect, ReactNode } from 'react';
-import { authService } from '../services/api';
+import { authService } from '../services/authService';
 
 interface User {
     id: string;
@@ -14,7 +14,6 @@ interface AuthContextType {
     isAuthenticated: boolean;
     isLoading: boolean;
     login: (email: string, password: string) => Promise<void>;
-    register: (email: string, password: string, full_name: string) => Promise<void>;
     logout: () => Promise<void>;
     requestResetPassword: (email: string) => Promise<void>;
     resetPassword: (token: string, password: string) => Promise<void>;
@@ -40,18 +39,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const login = async (email: string, password: string) => {
         try {
             const response = await authService.login(email, password);
-            localStorage.setItem('token', response.token);
-            localStorage.setItem('user', JSON.stringify(response.user));
-            setUser(response.user);
-        } catch (error) {
-            console.error(error);
-            throw error;
-        }
-    };
-
-    const register = async (email: string, password: string, full_name: string) => {
-        try {
-            const response = await authService.register(email, password, full_name);
             localStorage.setItem('token', response.token);
             localStorage.setItem('user', JSON.stringify(response.user));
             setUser(response.user);
@@ -95,7 +82,6 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
                 isAuthenticated: !!user,
                 isLoading,
                 login,
-                register,
                 logout,
                 requestResetPassword,
                 resetPassword
