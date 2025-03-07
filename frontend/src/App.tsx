@@ -1,9 +1,10 @@
-// src/App.tsx
 import React from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
-import { AuthProvider } from './context/AuthContext';
+import { QueryClientProvider } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 import AppRoutes from './routes/AppRoutes';
+import { queryClient } from './lib/reactQuery';
 
 // Create a theme with toast configuration
 const theme = extendTheme({
@@ -24,13 +25,14 @@ const theme = extendTheme({
 
 const App = () => {
   return (
-    <ChakraProvider theme={theme}>
-      <AuthProvider>
+    <QueryClientProvider client={queryClient}>
+      <ChakraProvider theme={theme}>
         <BrowserRouter>
           <AppRoutes />
         </BrowserRouter>
-      </AuthProvider>
-    </ChakraProvider>
+      </ChakraProvider>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 };
 

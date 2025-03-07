@@ -6,7 +6,7 @@ import { Box, Button, Stack, Heading, Text, Link } from '@chakra-ui/react';
 import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/form-control';
 import { Input } from '@chakra-ui/input';
 import { useToast } from '@chakra-ui/toast';
-import { useUser } from '../../hooks/useUser';
+import { useRegister } from '../../hooks/userQueries';
 import { useHistory } from 'react-router-dom';
 
 const RegisterSchema = Yup.object().shape({
@@ -26,7 +26,7 @@ const RegisterSchema = Yup.object().shape({
 });
 
 const RegisterForm = () => {
-  const { register } = useUser();
+  const registerMutation = useRegister();
   const history = useHistory();
   const toast = useToast();
 
@@ -42,7 +42,12 @@ const RegisterForm = () => {
         validationSchema={RegisterSchema}
         onSubmit={async (values, { setSubmitting }) => {
           try {
-            await register(values.email, values.password, values.full_name);
+            await registerMutation.mutateAsync({
+              email: values.email,
+              password: values.password,
+              full_name: values.full_name
+            });
+            
             toast({
               title: "Registration successful",
               status: "success",

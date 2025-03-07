@@ -1,11 +1,10 @@
-// src/components/dashboard/Sidebar.tsx
 import React from 'react';
 import { Box, VStack, Heading, Flex, Text } from '@chakra-ui/react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { FiHome, FiDollarSign, FiPieChart, FiSettings, FiLogOut } from 'react-icons/fi';
-import { useAuth } from '../../hooks/useAuth';
 import { ChakraIcon } from '../ui/ChakraIcon';
 import { IconType } from 'react-icons';
+import { useLogout } from '../../hooks/userQueries';
 
 interface NavItemProps {
   icon: IconType;
@@ -16,7 +15,6 @@ interface NavItemProps {
 
 const NavItem: React.FC<NavItemProps> = ({ icon, label, path, active }) => {
   const history = useHistory();
-
   return (
     <Flex
       align="center"
@@ -38,14 +36,14 @@ const NavItem: React.FC<NavItemProps> = ({ icon, label, path, active }) => {
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
-  const { logout } = useAuth();
+  const logout = useLogout();
   const history = useHistory();
-
+  
   const handleLogout = async () => {
-    await logout();
+    await logout.mutateAsync();
     history.push('/login');
   };
-
+  
   return (
     <Box height="100%" py={5}>
       <Box textAlign="center" mb={8}>
@@ -53,34 +51,32 @@ const Sidebar: React.FC = () => {
           Finance Tracker
         </Heading>
       </Box>
-      
       <VStack spacing={1} align="stretch" px={3}>
-        <NavItem 
-          icon={FiHome} 
-          label="Dashboard" 
-          path="/dashboard" 
-          active={location.pathname === '/dashboard'} 
+        <NavItem
+          icon={FiHome}
+          label="Dashboard"
+          path="/dashboard"
+          active={location.pathname === '/dashboard'}
         />
-        <NavItem 
-          icon={FiDollarSign} 
-          label="Transactions" 
-          path="/dashboard/transactions" 
-          active={location.pathname === '/dashboard/transactions'} 
+        <NavItem
+          icon={FiDollarSign}
+          label="Transactions"
+          path="/dashboard/transactions"
+          active={location.pathname === '/dashboard/transactions'}
         />
-        <NavItem 
-          icon={FiPieChart} 
-          label="Budget" 
-          path="/dashboard/budget" 
-          active={location.pathname === '/dashboard/budget'} 
+        <NavItem
+          icon={FiPieChart}
+          label="Budget"
+          path="/dashboard/budget"
+          active={location.pathname === '/dashboard/budget'}
         />
-        <NavItem 
-          icon={FiSettings} 
-          label="Settings" 
-          path="/dashboard/settings" 
-          active={location.pathname === '/dashboard/settings'} 
+        <NavItem
+          icon={FiSettings}
+          label="Settings"
+          path="/dashboard/settings"
+          active={location.pathname === '/dashboard/settings'}
         />
       </VStack>
-
       <Box position="absolute" bottom={5} width="100%" px={3}>
         <Flex
           align="center"

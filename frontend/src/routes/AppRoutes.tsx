@@ -1,7 +1,6 @@
-// src/routes/AppRoutes.tsx
 import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth';
+import { useUserData } from '../hooks/userQueries';
 
 // Auth Pages
 import Login from '../pages/Login';
@@ -14,13 +13,13 @@ import Dashboard from '../pages/Dashboard';
 
 // Protected route wrapper
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { data: user, isLoading } = useUserData();
   
   if (isLoading) {
     return <div>Loading...</div>;
   }
   
-  if (!isAuthenticated) {
+  if (!user) {
     return <Redirect to="/login" />;
   }
   

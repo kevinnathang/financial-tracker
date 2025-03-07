@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import { Box, Button, Stack, Heading, Text, Link } from '@chakra-ui/react';
 import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/form-control';
 import { Input } from '@chakra-ui/input';
-import { useAuth } from '../../hooks/useAuth';
+import { useLogin } from '../../hooks/userQueries';
 import { useHistory } from 'react-router-dom';
 
 const LoginSchema = Yup.object().shape({
@@ -17,13 +17,16 @@ const LoginSchema = Yup.object().shape({
 });
 
 const LoginForm = () => {
-    const { login } = useAuth();
+    const loginMutation = useLogin();
     const history = useHistory();
 
     const handleFormSubmit = async (values: any, { setSubmitting }: any) => {
         try {
             console.log("Attempting login...");
-            await login(values.email, values.password);
+            await loginMutation.mutateAsync({ 
+                email: values.email, 
+                password: values.password 
+            });
             console.log("Login successful, showing toast");
  
             history.push('/dashboard');

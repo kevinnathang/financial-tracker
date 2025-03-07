@@ -6,7 +6,7 @@ import { Box, Button, Stack, Heading, Text, Link, useToast } from '@chakra-ui/re
 import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/form-control';
 import { Input } from '@chakra-ui/input';
 import { useHistory } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { useRequestPasswordReset } from '../../hooks/userQueries'; 
 
 const RequestPasswordResetSchema = Yup.object().shape({
   email: Yup.string()
@@ -17,11 +17,11 @@ const RequestPasswordResetSchema = Yup.object().shape({
 const RequestPasswordResetForm = () => {
   const history = useHistory();
   const toast = useToast();
-  const { requestResetPassword } = useAuth()
+  const useRequestPasswordResetMutation = useRequestPasswordReset()
 
   const handleFormSubmit = async (values: { email: string }, { setSubmitting }: any) => {
     try {
-      await requestResetPassword(values.email);
+      await useRequestPasswordResetMutation.mutateAsync(values.email);
       
       toast({
         title: "Reset link sent",

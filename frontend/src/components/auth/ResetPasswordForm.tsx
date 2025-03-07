@@ -6,7 +6,7 @@ import { Box, Button, Stack, Heading, Text, useToast } from '@chakra-ui/react';
 import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/form-control';
 import { Input } from '@chakra-ui/input';
 import { useHistory, useParams } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
+import { useResetPassword } from '../../hooks/userQueries';
 
 const ResetPasswordSchema = Yup.object().shape({
   password: Yup.string()
@@ -25,12 +25,15 @@ const ResetPasswordForm = () => {
   const { token } = useParams<ResetParams>();
   const history = useHistory();
   const toast = useToast();
-  const { resetPassword } = useAuth()
+  const resetPasswordMutation = useResetPassword()
 
   const handleFormSubmit = async (values: { password: string }, { setSubmitting }: any) => {
     try {
-      await resetPassword(token, values.password);
-      
+      await resetPasswordMutation.mutateAsync({
+        token,
+        password: values.password
+      });
+          
       toast({
         title: "Password reset successful",
         description: "Your password has been updated successfully",

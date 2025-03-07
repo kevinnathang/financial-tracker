@@ -1,20 +1,20 @@
-// src/components/dashboard/Header.tsx
 import React from 'react';
 import { Flex, Box, Text, Avatar, Menu, MenuButton, MenuList, MenuItem, MenuDivider } from '@chakra-ui/react';
 import { FiBell, FiChevronDown } from 'react-icons/fi';
-import { useAuth } from '../../hooks/useAuth';
 import { useHistory } from 'react-router-dom';
 import { ChakraIcon } from '../ui/ChakraIcon';
+import { useUserData, useLogout } from '../../hooks/userQueries';
 
 const Header: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { data: user } = useUserData();
+  const logout = useLogout();
   const history = useHistory();
-
+  
   const handleLogout = async () => {
-    await logout();
+    await logout.mutateAsync();
     history.push('/login');
   };
-
+  
   return (
     <Flex
       alignItems="center"
@@ -29,7 +29,6 @@ const Header: React.FC = () => {
           Dashboard
         </Text>
       </Box>
-
       <Flex alignItems="center">
         {/* Notifications */}
         <Box position="relative" mr={4}>
@@ -50,15 +49,14 @@ const Header: React.FC = () => {
             bg="red.500"
           />
         </Box>
-
         {/* User Profile Menu */}
         <Menu>
           <MenuButton>
             <Flex alignItems="center">
-              <Avatar 
-                size="sm" 
-                name={user?.full_name || 'User'} 
-                mr={2} 
+              <Avatar
+                size="sm"
+                name={user?.full_name || 'User'}
+                mr={2}
               />
               <Text mr={1} display={{ base: 'none', md: 'block' }}>
                 {user?.full_name || 'User'}
