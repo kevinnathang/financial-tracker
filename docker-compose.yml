@@ -45,10 +45,11 @@ services:
       - "3001:3000"
     volumes:
       - ./frontend:/usr/src/app
-      - /usr/src/app/node_modules
+      - frontend_node_modules:/usr/src/app/node_modules
     environment:
       - REACT_APP_API_URL=http://localhost:3000/v1/api
       - WDS_SOCKET_PORT=0
+      - CHOKIDAR_USEPOLLING=true # Better hot reloading in Docker
     depends_on:
       - backend
     networks:
@@ -56,6 +57,7 @@ services:
 
 volumes:
   postgres_data:
+  frontend_node_modules:
 
 
 networks:
