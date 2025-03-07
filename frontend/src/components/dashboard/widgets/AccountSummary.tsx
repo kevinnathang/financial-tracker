@@ -4,6 +4,7 @@ import { Box, SimpleGrid, Stat, StatLabel, StatNumber, StatHelpText, StatArrow, 
 import { FiDollarSign, FiArrowUpRight, FiArrowDownRight, FiPieChart } from 'react-icons/fi';
 import { IconType } from 'react-icons';
 import { ChakraIcon } from '../../ui/ChakraIcon';
+import { useUserData } from '../../../hooks/userQueries';
 
 interface StatCardProps {
   title: string;
@@ -51,11 +52,15 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, change, icon, accentC
 };
 
 const AccountSummary: React.FC = () => {
-  // In a real app, this data would come from your API or state management
+  const { data: user } = useUserData()
+  console.log('User data in AccountSummary:', JSON.stringify(user));
+
+  const formattedBalance = `$${parseFloat(String(user?.balance)).toFixed(2)}`;
+
   const statData = [
     {
       title: 'Total Balance',
-      value: '$5,240.00',
+      value: formattedBalance,
       change: 2.5,
       icon: FiDollarSign,
       accentColor: 'blue.500'
