@@ -7,7 +7,7 @@ import authRoutes from './auth.routes'
 const router = Router();
 
 router.use('/user', userRoutes);
-router.use('/transaction', transactionRoutes);
+router.use('/transactions', transactionRoutes);
 router.use('/auth', authRoutes)
 
 export default router;
