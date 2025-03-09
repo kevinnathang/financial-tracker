@@ -13,7 +13,7 @@ const RecentTransactions: React.FC = () => {
     {
       id: 1,
       description: 'Grocery Store',
-      category: 'Shopping',
+      tag: 'Shopping',
       date: '2023-04-15',
       amount: -85.45,
       icon: FiShoppingBag,
@@ -22,7 +22,7 @@ const RecentTransactions: React.FC = () => {
     {
       id: 2,
       description: 'Coffee Shop',
-      category: 'Food & Drink',
+      tag: 'Food & Drink',
       date: '2023-04-14',
       amount: -4.50,
       icon: FiCoffee,
@@ -31,7 +31,7 @@ const RecentTransactions: React.FC = () => {
     {
       id: 3,
       description: 'Rent Payment',
-      category: 'Housing',
+      tag: 'Housing',
       date: '2023-04-14',
       amount: -1200.00,
       icon: FiHome,
@@ -40,7 +40,8 @@ const RecentTransactions: React.FC = () => {
     {
       id: 4,
       description: 'Salary Deposit',
-      category: 'Income',
+      tag: 'Housing',
+      type: 'Income',
       date: '2023-04-13',
       amount: 3200.00,
       icon: FiTruck,
@@ -67,7 +68,7 @@ const RecentTransactions: React.FC = () => {
           <Thead>
             <Tr>
               <Th>Description</Th>
-              <Th>Category</Th>
+              <Th>Tag</Th>
               <Th>Date</Th>
               <Th isNumeric>Amount</Th>
             </Tr>
@@ -100,7 +101,7 @@ const RecentTransactions: React.FC = () => {
                     py={0.5} 
                     borderRadius="full"
                   >
-                    {transaction.category}
+                    {transaction.tag}
                   </Badge>
                 </Td>
                 <Td>{transaction.date}</Td>

@@ -1,6 +1,6 @@
 import { useQuery, useMutation } from 'react-query';
-import { authService } from '../services/authService';
-import { userService } from '../services/userService';
+import  authService  from '../services/authService';
+import  userService  from '../services/userService';
 import { queryClient } from '../lib/reactQuery';
 
 export interface User {
