@@ -70,15 +70,8 @@ export const transactionService = {
   },
   
   // Get user transactions with optional filters
-  getTransactions: async (params?: {
-    startDate?: Date;
-    endDate?: Date;
-    type?: string;
-    tag_id?: string;
-    limit?: number;
-    offset?: number;
-  }): Promise<TransactionListResponse> => {
-    const response = await api.get('/transactions', { params });
+  getTransactions: async () => {
+    const response = await api.get('/transactions');
     return response.data;
   },
   

@@ -72,8 +72,6 @@ const AccountSummary: React.FC = () => {
     );
   }
   
-  const formattedBalance = `$${parseFloat(String(user?.balance || 0)).toFixed(2)}`;
-  
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -85,7 +83,7 @@ const AccountSummary: React.FC = () => {
   const statData = [
     {
       title: 'Total Balance',
-      value: formatCurrency(user.balance),
+      value: formatCurrency(monthlyStats.currentMonth.balance),
       change: monthlyStats.percentageChanges.balance,
       icon: FiDollarSign,
       accentColor: 'blue.500'

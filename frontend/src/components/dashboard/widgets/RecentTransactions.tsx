@@ -1,53 +1,46 @@
 // src/components/dashboard/widgets/RecentTransactions.tsx
 import React from 'react';
-import { Box, Heading, Table, Thead, Tbody, Tr, Th, Td, Badge, Flex, Text, Button } from '@chakra-ui/react';
-import { FiShoppingBag, FiCoffee, FiHome, FiTruck, FiArrowRight } from 'react-icons/fi';
+import { Box, Heading, Table, Thead, Tbody, Tr, Th, Td, Badge, Flex, Text, Button, Spinner } from '@chakra-ui/react';
+import { FiArrowRight } from 'react-icons/fi';
 import { useHistory } from 'react-router-dom';
 import { ChakraIcon } from '../../ui/ChakraIcon';
+import { useTransactions } from '../../../hooks/transactionQueries';
 
 const RecentTransactions: React.FC = () => {
   const history = useHistory();
+  const { data, isLoading, isError } = useTransactions();
+
+  // Handle loading state
+  if (isLoading) {
+    return (
+      <Box p={4} bg="white" borderRadius="lg" boxShadow="sm" textAlign="center">
+        <Spinner size="md" />
+        <Text mt={2}>Loading transactions...</Text>
+      </Box>
+    );
+  }
   
-  // In a real app, this data would come from your API or state management
-  const transactions = [
-    {
-      id: 1,
-      description: 'Grocery Store',
-      tag: 'Shopping',
-      date: '2023-04-15',
-      amount: -85.45,
-      icon: FiShoppingBag,
-      color: 'blue.500'
-    },
-    {
-      id: 2,
-      description: 'Coffee Shop',
-      tag: 'Food & Drink',
-      date: '2023-04-14',
-      amount: -4.50,
-      icon: FiCoffee,
-      color: 'orange.500'
-    },
-    {
-      id: 3,
-      description: 'Rent Payment',
-      tag: 'Housing',
-      date: '2023-04-14',
-      amount: -1200.00,
-      icon: FiHome,
-      color: 'purple.500'
-    },
-    {
-      id: 4,
-      description: 'Salary Deposit',
-      tag: 'Housing',
-      type: 'Income',
-      date: '2023-04-13',
-      amount: 3200.00,
-      icon: FiTruck,
-      color: 'green.500'
-    }
-  ];
+  // Handle error state
+  if (isError || !data) {
+    return (
+      <Box p={4} bg="red.50" color="red.500" borderRadius="lg">
+        <Text>Unable to load account transactions. Please try again later.</Text>
+      </Box>
+    );
+  }
+  
+  // Extract the transactions array from the response
+  const transactions = data.transactions || [];
+
+  // Handle empty transactions
+  if (transactions.length === 0) {
+    return (
+      <Box p={4} bg="white" borderRadius="lg" boxShadow="sm">
+        <Heading size="md" mb={4}>Recent Transactions</Heading>
+        <Text color="gray.500">No transactions found.</Text>
+      </Box>
+    );
+  }
 
   return (
     <Box bg="white" borderRadius="lg" boxShadow="sm" p={5}>
@@ -81,14 +74,11 @@ const RecentTransactions: React.FC = () => {
                     <Flex 
                       alignItems="center" 
                       justifyContent="center" 
-                      bg={`${transaction.color}15`} 
-                      color={transaction.color}
                       p={1}
                       borderRadius="md"
                       boxSize="30px"
                       mr={3}
                     >
-                      <ChakraIcon icon={transaction.icon} />
                     </Flex>
                     <Text fontWeight="medium">{transaction.description}</Text>
                   </Flex>
@@ -101,12 +91,12 @@ const RecentTransactions: React.FC = () => {
                     py={0.5} 
                     borderRadius="full"
                   >
-                    {transaction.tag}
+                    {transaction.tag?.name}
                   </Badge>
                 </Td>
                 <Td>{transaction.date}</Td>
-                <Td isNumeric fontWeight="medium" color={transaction.amount > 0 ? 'green.500' : undefined}>
-                  {transaction.amount > 0 ? '+' : ''}{transaction.amount.toFixed(2)}
+                <Td isNumeric fontWeight="medium" color={transaction.type === 'income' ? 'green.500' : 'red.500'}>
+                  {transaction.type  === 'income' ? '+' : '-'}{transaction.amount}
                 </Td>
               </Tr>
             ))}

@@ -74,86 +74,12 @@ export class TransactionController {
 
     static async getTransactions(req: Request, res: Response) {
         try {
-            const userId = req.user?.userId;
-            if (!userId) {
-                return res.status(401).json({ message: 'Unauthorized' });
-            }
-
-            // Parse query parameters
-            const {
-                startDate,
-                endDate,
-                type,
-                tag_id,
-                limit = '50',
-                offset = '0'
-            } = req.query;
-
-            // Build the where clause
-            const where: Prisma.TransactionWhereInput = {
-                user_id: userId
-            };
-
-            // Initialize date object if dates are provided
-            const dateFilter: Prisma.DateTimeFilter = {};
-            let hasDateFilter = false;
-
-            // Add start date if provided
-            if (startDate && typeof startDate === 'string') {
-                dateFilter.gte = new Date(startDate);
-                hasDateFilter = true;
-            }
-
-            // Add end date if provided
-            if (endDate && typeof endDate === 'string') {
-                dateFilter.lte = new Date(endDate);
-                hasDateFilter = true;
-            }
-
-            // Only add date filter if at least one date constraint exists
-            if (hasDateFilter) {
-                where.date = dateFilter;
-            }
-
-            // Add type filter if provided
-            if (type && typeof type === 'string') {
-                where.type = type;
-            }
-
-            // Add tag filter if provided
-            if (tag_id && typeof tag_id === 'string') {
-                where.tag_id = tag_id;
-            }
-
-            // Parse pagination parameters
-            const limitNum = parseInt(limit as string, 10);
-            const offsetNum = parseInt(offset as string, 10);
-
-            // Get transactions with pagination
+            const user_id = req.user?.userId
             const transactions = await prisma.transaction.findMany({
-                where,
-                orderBy: {
-                    date: 'desc'
-                },
-                include: {
-                    tag: true,
-                    financialGeopoint: true
-                },
-                take: limitNum,
-                skip: offsetNum
-            });
+                where: { user_id: user_id }
+            })
+            return res.json({ transactions })
 
-            // Get total count for pagination
-            const totalCount = await prisma.transaction.count({ where });
-
-            return res.status(200).json({
-                transactions,
-                pagination: {
-                    total: totalCount,
-                    limit: limitNum,
-                    offset: offsetNum
-                }
-            });
         } catch (error) {
             console.error('Get transactions error:', error);
             return res.status(500).json({ message: 'Error retrieving transactions' });

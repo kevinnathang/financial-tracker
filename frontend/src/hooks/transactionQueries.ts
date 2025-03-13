@@ -15,17 +15,10 @@ export const TRANSACTION_KEYS = {
 };
 
 // Get transactions with optional filtering
-export const useTransactions = (filters?: {
-  startDate?: Date;
-  endDate?: Date;
-  type?: string;
-  tag_id?: string;
-  limit?: number;
-  offset?: number;
-}) => {
+export const useTransactions = () => {
   return useQuery<TransactionListResponse, Error>(
-    TRANSACTION_KEYS.list(filters),
-    () => transactionService.getTransactions(filters)
+    TRANSACTION_KEYS.lists(),
+    transactionService.getTransactions
   );
 };
 
