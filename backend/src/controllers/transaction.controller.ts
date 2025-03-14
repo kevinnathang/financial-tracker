@@ -76,7 +76,14 @@ export class TransactionController {
         try {
             const user_id = req.user?.userId
             const transactions = await prisma.transaction.findMany({
-                where: { user_id: user_id }
+                where: { user_id: user_id },
+                include: {
+                    tag: true,
+                    financialGeopoint: true,
+                },
+                orderBy: {
+                    date: 'desc'
+                }
             })
             return res.json({ transactions })
 

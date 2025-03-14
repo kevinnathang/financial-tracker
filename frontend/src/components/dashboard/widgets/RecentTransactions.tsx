@@ -71,28 +71,13 @@ const RecentTransactions: React.FC = () => {
               <Tr key={transaction.id}>
                 <Td>
                   <Flex alignItems="center">
-                    <Flex 
-                      alignItems="center" 
-                      justifyContent="center" 
-                      p={1}
-                      borderRadius="md"
-                      boxSize="30px"
-                      mr={3}
-                    >
-                    </Flex>
                     <Text fontWeight="medium">{transaction.description}</Text>
                   </Flex>
                 </Td>
                 <Td>
-                  <Badge 
-                    colorScheme={transaction.amount > 0 ? 'green' : 'gray'} 
-                    variant="subtle" 
-                    px={2} 
-                    py={0.5} 
-                    borderRadius="full"
-                  >
-                    {transaction.tag?.name}
-                  </Badge>
+                  <Flex alignItems="center">
+                    <Text fontWeight="medium">{transaction.tag?.name}</Text>
+                  </Flex>
                 </Td>
                 <Td>{transaction.date}</Td>
                 <Td isNumeric fontWeight="medium" color={transaction.type === 'income' ? 'green.500' : 'red.500'}>
