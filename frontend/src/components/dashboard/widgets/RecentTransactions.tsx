@@ -60,8 +60,8 @@ const RecentTransactions: React.FC = () => {
         <Table variant="simple" size="sm">
           <Thead>
             <Tr>
-              <Th>Description</Th>
               <Th>Tag</Th>
+              <Th>Description</Th>
               <Th>Date</Th>
               <Th isNumeric>Amount</Th>
             </Tr>
@@ -71,12 +71,12 @@ const RecentTransactions: React.FC = () => {
               <Tr key={transaction.id}>
                 <Td>
                   <Flex alignItems="center">
-                    <Text fontWeight="medium">{transaction.description}</Text>
+                    <Text fontWeight="medium">{transaction.tag?.name}</Text>
                   </Flex>
                 </Td>
                 <Td>
                   <Flex alignItems="center">
-                    <Text fontWeight="medium">{transaction.tag?.name}</Text>
+                    <Text fontWeight="medium">{transaction.description}</Text>
                   </Flex>
                 </Td>
                 <Td>{transaction.date}</Td>
