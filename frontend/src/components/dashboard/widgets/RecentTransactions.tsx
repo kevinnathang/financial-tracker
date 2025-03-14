@@ -1,14 +1,19 @@
 // src/components/dashboard/widgets/RecentTransactions.tsx
-import React from 'react';
-import { Box, Heading, Table, Thead, Tbody, Tr, Th, Td, Badge, Flex, Text, Button, Spinner } from '@chakra-ui/react';
-import { FiArrowRight } from 'react-icons/fi';
+import React, { useState } from 'react';
+import { Box, Heading, Table, Thead, Tbody, Tr, Th, Td, Flex, Text, Button, Spinner } from '@chakra-ui/react';
+import { FiArrowRight, FiPlus } from 'react-icons/fi';
 import { useHistory } from 'react-router-dom';
 import { ChakraIcon } from '../../ui/ChakraIcon';
 import { useTransactions } from '../../../hooks/transactionQueries';
+import TransactionModal from '../TransactionModal';
 
 const RecentTransactions: React.FC = () => {
   const history = useHistory();
   const { data, isLoading, isError } = useTransactions();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
 
   // Handle loading state
   if (isLoading) {
@@ -46,14 +51,24 @@ const RecentTransactions: React.FC = () => {
     <Box bg="white" borderRadius="lg" boxShadow="sm" p={5}>
       <Flex justifyContent="space-between" alignItems="center" mb={4}>
         <Heading size="md">Recent Transactions</Heading>
-        <Button 
-          variant="ghost" 
-          size="sm" 
-          rightIcon={<ChakraIcon icon={FiArrowRight} />}
-          onClick={() => history.push('/dashboard/transactions')}
-        >
-          View All
-        </Button>
+        <Flex gap={2}>
+          <Button
+            colorScheme="blue"
+            size="sm"
+            leftIcon={<ChakraIcon icon={FiPlus} />}
+            onClick={openModal}
+          >
+            New Transaction
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            rightIcon={<ChakraIcon icon={FiArrowRight} />}
+            onClick={() => history.push('/dashboard/transactions')}
+          >
+            View All
+          </Button>
+        </Flex>
       </Flex>
 
       <Box overflowX="auto">
@@ -88,6 +103,7 @@ const RecentTransactions: React.FC = () => {
           </Tbody>
         </Table>
       </Box>
+      <TransactionModal isOpen={isModalOpen} onClose={closeModal} />
     </Box>
   );
 };
