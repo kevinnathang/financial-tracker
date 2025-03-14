@@ -18,9 +18,13 @@ import {
   useToast,
   Radio,
   RadioGroup,
-  Flex
+  Flex,
+  Box,
+  Spinner,
+  Text
 } from '@chakra-ui/react';
 import { useCreateTransaction } from '../../hooks/transactionQueries';
+import { useTags } from '../../hooks/tagQueries';
 
 interface TransactionModalProps {
   isOpen: boolean;
@@ -28,6 +32,8 @@ interface TransactionModalProps {
 }
 
 const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onClose }) => {
+    const { data, isLoading, isError } = useTags();
+
     const [amount, setAmount] = useState<number>(0);
     const [description, setDescription] = useState('');
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
@@ -37,6 +43,27 @@ const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onClose }) 
 
     const transactionMutation = useCreateTransaction()
     const toast = useToast();
+
+    // Handle loading state
+    if (isLoading) {
+        return (
+            <Box p={4} bg="white" borderRadius="lg" boxShadow="sm" textAlign="center">
+                <Spinner size="md" />
+                <Text mt={2}>Loading transactions...</Text>
+            </Box>
+        );
+    }
+    
+    // Handle error state
+    if (isError || !data) {
+        return (
+            <Box p={4} bg="red.50" color="red.500" borderRadius="lg">
+                <Text>Unable to load account transactions. Please try again later.</Text>
+            </Box>
+        );
+    }
+
+    const tags = data.tags || [];
 
     const handleSubmit = async () => {
         if (!type || !amount || !date) {

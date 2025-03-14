@@ -5,17 +5,37 @@ export class TagController {
     static async createTag(req: Request, res: Response) {
         try {
             const { name, icon, color } = req.body;
+            const user_id = req.user?.userId
 
-            const existingTag = await prisma.tag.findFirst({ where: { name } })
+            if (!user_id) {
+                return res.status(401).json({ message: 'Unauthorized' });
+            }
+
+            // Check for required fields
+            if (!name || !color) {
+                return res.status(400).json({ message: 'Name and color are required' });
+            }
+
+            // Check if tag already exists for this user
+            const existingTag = await prisma.tag.findFirst({
+                where: {
+                    name,
+                    user_id
+                }
+            });
+
             if (existingTag) {
-                return res.status(400).json({ message: 'Tag already exists' });
+                return res.status(400).json({ message: 'Tag already exists for this user' });
             }
 
             const tag = await prisma.tag.create({
                 data: {
                     name,
                     icon,
-                    color
+                    color,
+                    user: {
+                        connect: { id: user_id }
+                    }
                 }
             });
 
@@ -25,12 +45,35 @@ export class TagController {
                     id: tag.id,
                     name: tag.name,
                     color: tag.color,
-                    icon: tag.icon
+                    icon: tag.icon,
+                    user_id: tag.user_id
                 }
             });
         } catch (error) {
             console.error('Tag creation error:', error);
             return res.status(500).json({ message: 'Error creating tag', error });
+        }
+    }
+
+    static async getTags(req: Request, res: Response) {
+        try {
+            const user_id = req.user?.userId
+
+            if (!user_id) {
+                return res.status(401).json({ message: 'Unauthorized' });
+            }
+
+
+            const tags = await prisma.tag.findMany({
+                where: { user_id: user_id }
+            })
+
+            return res.status(200).json({
+                tags
+            });
+        } catch (error) {
+            console.error('Get tags error:', error);
+            return res.status(500).json({ message: 'Error retrieving tags', error });
         }
     }
 }

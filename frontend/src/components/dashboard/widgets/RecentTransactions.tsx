@@ -1,4 +1,3 @@
-// src/components/dashboard/widgets/RecentTransactions.tsx
 import React, { useState } from 'react';
 import { Box, Heading, Table, Thead, Tbody, Tr, Th, Td, Flex, Text, Button, Spinner } from '@chakra-ui/react';
 import { FiArrowRight, FiPlus } from 'react-icons/fi';
@@ -11,7 +10,7 @@ const RecentTransactions: React.FC = () => {
   const history = useHistory();
   const { data, isLoading, isError } = useTransactions();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
+  
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
@@ -24,7 +23,7 @@ const RecentTransactions: React.FC = () => {
       </Box>
     );
   }
-  
+
   // Handle error state
   if (isError || !data) {
     return (
@@ -33,19 +32,9 @@ const RecentTransactions: React.FC = () => {
       </Box>
     );
   }
-  
+
   // Extract the transactions array from the response
   const transactions = data.transactions || [];
-
-  // Handle empty transactions
-  if (transactions.length === 0) {
-    return (
-      <Box p={4} bg="white" borderRadius="lg" boxShadow="sm">
-        <Heading size="md" mb={4}>Recent Transactions</Heading>
-        <Text color="gray.500">No transactions found.</Text>
-      </Box>
-    );
-  }
 
   return (
     <Box bg="white" borderRadius="lg" boxShadow="sm" p={5}>
@@ -71,38 +60,45 @@ const RecentTransactions: React.FC = () => {
         </Flex>
       </Flex>
 
-      <Box overflowX="auto">
-        <Table variant="simple" size="sm">
-          <Thead>
-            <Tr>
-              <Th>Tag</Th>
-              <Th>Description</Th>
-              <Th>Date</Th>
-              <Th isNumeric>Amount</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {transactions.map((transaction) => (
-              <Tr key={transaction.id}>
-                <Td>
-                  <Flex alignItems="center">
-                    <Text fontWeight="medium">{transaction.tag?.name}</Text>
-                  </Flex>
-                </Td>
-                <Td>
-                  <Flex alignItems="center">
-                    <Text fontWeight="medium">{transaction.description}</Text>
-                  </Flex>
-                </Td>
-                <Td>{transaction.date}</Td>
-                <Td isNumeric fontWeight="medium" color={transaction.type === 'income' ? 'green.500' : 'red.500'}>
-                  {transaction.type  === 'income' ? '+' : '-'}{transaction.amount}
-                </Td>
+      {/* Show appropriate content based on transaction list */}
+      {transactions.length === 0 ? (
+        <Text color="gray.500" py={4}>No transactions found.</Text>
+      ) : (
+        <Box overflowX="auto">
+          <Table variant="simple" size="sm">
+            <Thead>
+              <Tr>
+                <Th>Tag</Th>
+                <Th>Description</Th>
+                <Th>Date</Th>
+                <Th isNumeric>Amount</Th>
               </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </Box>
+            </Thead>
+            <Tbody>
+              {transactions.map((transaction) => (
+                <Tr key={transaction.id}>
+                  <Td>
+                    <Flex alignItems="center">
+                      <Text fontWeight="medium">{transaction.tag?.name}</Text>
+                    </Flex>
+                  </Td>
+                  <Td>
+                    <Flex alignItems="center">
+                      <Text fontWeight="medium">{transaction.description}</Text>
+                    </Flex>
+                  </Td>
+                  <Td>{transaction.date}</Td>
+                  <Td isNumeric fontWeight="medium" color={transaction.type === 'income' ? 'green.500' : 'red.500'}>
+                    {transaction.type === 'income' ? '+' : '-'}{transaction.amount}
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </Box>
+      )}
+      
+      {/* Transaction Modal */}
       <TransactionModal isOpen={isModalOpen} onClose={closeModal} />
     </Box>
   );

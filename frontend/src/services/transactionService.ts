@@ -16,6 +16,7 @@ export interface Transaction {
     name: string;
     icon: string | null;
     color: string;
+    user_id: string;
   };
   financialGeopoint?: {
     id: string;
@@ -23,6 +24,7 @@ export interface Transaction {
     type: string;
     location: any;
     address: string | null;
+    user_id: string;
   };
 }
 
