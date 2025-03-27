@@ -18,7 +18,18 @@ export interface TagListResponse {
     };
 }
 
+export interface TagPayload {
+    name: string;
+    color?: string;
+    icon?: string | null;
+}
+
 export const tagService = {
+    // Create tags
+    createTag: async (tag: TagPayload) => {
+        const response = await api.post('/tag', tag);
+        return response.data;
+    },
     // Get user tag
     getTags: async () => {
         const response = await api.get('/tag');

@@ -63,8 +63,6 @@ const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onClose }) 
         );
     }
 
-    const tags = data.tags || [];
-
     const handleSubmit = async () => {
         if (!type || !amount || !date) {
             toast({

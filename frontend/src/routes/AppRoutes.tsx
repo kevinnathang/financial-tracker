@@ -10,6 +10,7 @@ import ResetPassword from '../pages/ResetPassword';
 
 // Dashboard Pages
 import Dashboard from '../pages/Dashboard';
+import Tags from '../pages/Tags'
 
 // Protected route wrapper
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
@@ -42,6 +43,15 @@ const AppRoutes = () => {
         render={() => (
           <ProtectedRoute>
             <Dashboard />
+          </ProtectedRoute>
+        )}
+      />
+      <Route
+        path="/dashboard/tags"
+        exact
+        render={() => (
+          <ProtectedRoute>
+            <Tags />
           </ProtectedRoute>
         )}
       />

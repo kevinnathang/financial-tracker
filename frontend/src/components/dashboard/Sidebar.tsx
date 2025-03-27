@@ -60,9 +60,9 @@ const Sidebar: React.FC = () => {
         />
         <NavItem
           icon={FiDollarSign}
-          label="Transactions"
-          path="/dashboard/transactions"
-          active={location.pathname === '/dashboard/transactions'}
+          label="Tags"
+          path="/dashboard/tags"
+          active={location.pathname === '/dashboard/tags'}
         />
         <NavItem
           icon={FiPieChart}

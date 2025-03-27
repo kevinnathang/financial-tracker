@@ -1,7 +1,8 @@
 // src/hooks/tagQueries.ts
-import { useQuery } from 'react-query';
+import { useQuery, useMutation } from 'react-query';
 import tagService, { 
-  TagListResponse
+  TagListResponse,
+  TagPayload
 } from '../services/tagService';
 
 // Query keys
@@ -17,3 +18,10 @@ export const useTags = () => {
     tagService.getTags
   );
 };
+
+// Create new tag
+export const useCreateTag = () => {
+  return useMutation<any, Error, TagPayload>(
+    (tag) => tagService.createTag(tag)
+  )
+}
