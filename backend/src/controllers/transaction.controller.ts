@@ -185,4 +185,54 @@ export class TransactionController {
             return res.status(500).json({ message: 'Error retrieving monthly statistics' });
         }
     }
+
+    static async deleteTransaction(req: Request, res: Response) {
+        console.log("called method in controller")
+        try {
+            const user_id = req.user?.userId;
+            const { transactionId } = req.params;
+            console.log(transactionId, user_id)
+
+            if (!user_id) {
+                return res.status(401).json({ message: 'Unauthorized' });
+            }
+
+            // Find the transaction to get the amount and type
+            const transaction = await prisma.transaction.findUnique({
+                where: { id: transactionId },
+                select: { amount: true, type: true, user_id: true }
+            });
+
+            if (!transaction || transaction.user_id !== user_id) {
+                return res.status(404).json({ message: 'Transaction not found' });
+            }
+
+            // Calculate balance adjustment
+            const balanceChange = transaction.type.toLowerCase() === 'income'
+                ? new Prisma.Decimal(transaction.amount).negated() // Subtract income
+                : new Prisma.Decimal(transaction.amount); // Add back expense
+
+            // Start a transaction to delete and update balance
+            await prisma.$transaction(async (prismaClient) => {
+                await prismaClient.transaction.delete({
+                    where: { id: transactionId },
+                });
+
+                await prismaClient.user.update({
+                    where: { id: user_id },
+                    data: {
+                        balance: {
+                            increment: balanceChange,
+                        },
+                    },
+                });
+            });
+
+            return res.status(200).json({ message: 'Transaction deleted successfully' });
+
+        } catch (error) {
+            console.error('Delete transaction error:', error);
+            return res.status(500).json({ message: 'Error deleting transaction', error });
+        }
+    }
 }

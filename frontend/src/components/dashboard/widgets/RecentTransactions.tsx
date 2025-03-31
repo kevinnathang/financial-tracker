@@ -1,21 +1,28 @@
 import React, { useState } from 'react';
-import { Box, Heading, Table, Thead, Tbody, Tr, Th, Td, Flex, Text, Button, Spinner } from '@chakra-ui/react';
+import { Box, Heading, Table, Thead, Tbody, Tr, Th, Td, Flex, Text, Button, Spinner, IconButton } from '@chakra-ui/react';
 import * as Icons from 'react-icons/fi';
 import { useHistory } from 'react-router-dom';
 import { ChakraIcon } from '../../ui/ChakraIcon';
-import { useTransactions } from '../../../hooks/transactionQueries';
+import { useTransactions, useDeleteTransaction } from '../../../hooks/transactionQueries';
 import TransactionModal from '../TransactionModal';
 
 const RecentTransactions: React.FC = () => {
   const history = useHistory();
   const { data, isLoading, isError } = useTransactions();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { mutate: deleteTransaction } = useDeleteTransaction();
   
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
 
   const getIconComponent = (iconName: string) => {
     return Icons[iconName as keyof typeof Icons] || Icons.FiTag; // Default to FiTag if not found
+  };
+
+  const handleDelete = (transactionId: string) => {
+    // Call the deleteTransaction mutation to delete the transaction
+    console.log(transactionId)
+    deleteTransaction(transactionId);
   };
 
   // Handle loading state
@@ -97,6 +104,15 @@ const RecentTransactions: React.FC = () => {
                   <Td>{transaction.date}</Td>
                   <Td isNumeric fontWeight="medium" color={transaction.type === 'income' ? 'green.500' : 'red.500'}>
                     {transaction.type === 'income' ? '+' : '-'}{transaction.amount}
+                  </Td>
+                  <Td>
+                    <IconButton
+                      aria-label="Delete Transaction"
+                      icon={<ChakraIcon icon={Icons.FiTrash2} />}
+                      colorScheme="red"
+                      size="sm"
+                      onClick={() => handleDelete(transaction.id)} // Call delete on click
+                    />
                   </Td>
                 </Tr>
               ))}

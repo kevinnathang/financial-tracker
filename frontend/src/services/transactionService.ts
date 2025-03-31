@@ -81,6 +81,20 @@ export const transactionService = {
   getMonthlyStats: async (): Promise<MonthlyStats> => {
     const response = await api.get('/transactions/monthly-stats');
     return response.data;
+  },
+  
+  deleteTransaction: async (transactionId: string) => {
+    try {
+      console.log(`SERVICE - Attempting to delete transaction with ID: ${transactionId}`);
+      
+      const response = await api.delete(`/transactions/${transactionId}`);
+      
+      console.log('SERVICE - Delete response:', response);
+      return response.data;
+    } catch (error) {
+      console.error('SERVICE - Error in deleteTransaction:', error);
+      throw error; // Rethrow to propagate error to caller
+    }
   }
 };
 

@@ -12,4 +12,6 @@ router.get('/', authMiddleware, TransactionController.getTransactions);
 // Get monthly transaction statistics (for dashboard)
 router.get('/monthly-stats', authMiddleware, TransactionController.getMonthlyStats);
 
+router.delete('/:transactionId', authMiddleware, TransactionController.deleteTransaction)
+
 export default router;

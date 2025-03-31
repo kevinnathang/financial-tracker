@@ -48,3 +48,30 @@ export const useCreateTransaction = () => {
     }
   );
 };
+
+export const useDeleteTransaction = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, string>(
+    async (transactionId) => {
+      console.log(`QUERY - Attempting to delete transaction with ID: ${transactionId}`);
+      const response = await transactionService.deleteTransaction(transactionId);
+      console.log(`QUERY - Transaction ${transactionId} deleted successfully`);
+      return response;
+    },
+    {
+      // When a transaction is deleted, invalidate relevant queries
+      onSuccess: () => {
+        console.log('QUERY - Delete transaction successful, invalidating queries...');
+        queryClient.invalidateQueries(TRANSACTION_KEYS.lists());
+        queryClient.invalidateQueries(TRANSACTION_KEYS.stats());
+      },
+      onError: (error, transactionId) => {
+        console.error(`QUERY - Error deleting transaction with ID: ${transactionId}`, error);
+      },
+      onSettled: () => {
+        console.log('QUERY - Delete transaction mutation settled (either success or failure).');
+      }
+    }
+  );
+};
