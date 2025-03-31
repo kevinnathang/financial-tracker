@@ -2,39 +2,40 @@
 import api from './api';
 
 export interface Tag {
-    id: string;
-    name: string;
-    color: string;
-    icon: string | null;
-    user_id: string;
+  id: string;
+  name: string;
+  color: string;
+  icon: string | null;
+  user_id: string;
 }
 
 export interface TagListResponse {
-    tags: Tag[];
-    pagination: {
-        total: number;
-        limit: number;
-        offset: number;
-    };
+  tags: Tag[];
 }
 
 export interface TagPayload {
-    name: string;
-    color?: string;
-    icon?: string | null;
+  name: string;
+  color: string;
+  icon?: string | null;
+}
+
+export interface CreateTagResponse {
+  message: string;
+  tag: Tag;
 }
 
 export const tagService = {
-    // Create tags
-    createTag: async (tag: TagPayload) => {
-        const response = await api.post('/tag', tag);
-        return response.data;
-    },
-    // Get user tag
-    getTags: async () => {
-        const response = await api.get('/tag');
-        return response.data;
-    },
-};
+  // Create tags
+  createTag: async (tag: TagPayload): Promise<CreateTagResponse> => {
+    const response = await api.post('/tag', tag);
+    return response.data;
+  },
   
+  // Get user tags
+  getTags: async (): Promise<TagListResponse> => {
+    const response = await api.get('/tag');
+    return response.data;
+  },
+};
+
 export default tagService;

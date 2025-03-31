@@ -48,9 +48,12 @@ const CreateTag: React.FC = () => {
     );
   }
   
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: any) => {
+    if (e) {
+      e.preventDefault();
+    }
     
-    if (!name) {
+    if (!name || !color) {
       toast({
         title: 'Error',
         description: 'Please fill all required fields',
@@ -157,6 +160,9 @@ const CreateTag: React.FC = () => {
                 borderColor="gray.200"
               />
             </HStack>
+            {!color && isSubmitting && (
+              <FormErrorMessage>Tag color is required</FormErrorMessage>
+            )}
           </FormControl>
           
           <FormControl>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Box, Heading, Table, Thead, Tbody, Tr, Th, Td, Flex, Text, Button, Spinner } from '@chakra-ui/react';
-import { FiArrowRight, FiPlus } from 'react-icons/fi';
+import * as Icons from 'react-icons/fi';
 import { useHistory } from 'react-router-dom';
 import { ChakraIcon } from '../../ui/ChakraIcon';
 import { useTransactions } from '../../../hooks/transactionQueries';
@@ -13,6 +13,10 @@ const RecentTransactions: React.FC = () => {
   
   const openModal = () => setIsModalOpen(true);
   const closeModal = () => setIsModalOpen(false);
+
+  const getIconComponent = (iconName: string) => {
+    return Icons[iconName as keyof typeof Icons] || Icons.FiTag; // Default to FiTag if not found
+  };
 
   // Handle loading state
   if (isLoading) {
@@ -44,7 +48,7 @@ const RecentTransactions: React.FC = () => {
           <Button
             colorScheme="blue"
             size="sm"
-            leftIcon={<ChakraIcon icon={FiPlus} />}
+            leftIcon={<ChakraIcon icon={Icons.FiPlus} />}
             onClick={openModal}
           >
             New Transaction
@@ -52,7 +56,7 @@ const RecentTransactions: React.FC = () => {
           <Button
             variant="ghost"
             size="sm"
-            rightIcon={<ChakraIcon icon={FiArrowRight} />}
+            rightIcon={<ChakraIcon icon={Icons.FiArrowRight} />}
             onClick={() => history.push('/dashboard/transactions')}
           >
             View All
@@ -78,7 +82,10 @@ const RecentTransactions: React.FC = () => {
               {transactions.map((transaction) => (
                 <Tr key={transaction.id}>
                   <Td>
-                    <Flex alignItems="center">
+                    <Flex alignItems="center" gap={2}>
+                    {transaction.tag?.icon && (
+                      <ChakraIcon icon={getIconComponent(transaction.tag.icon)} boxSize={4} />
+                    )}
                       <Text fontWeight="medium">{transaction.tag?.name}</Text>
                     </Flex>
                   </Td>

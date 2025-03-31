@@ -6,7 +6,7 @@ import { endOfMonth, startOfMonth, subMonths } from "date-fns";
 export class TransactionController {
     static async createTransaction(req: Request, res: Response) {
         try {
-            const { tag, financial_geopoint_id, amount, type, description, date } = req.body;
+            const { tag_id, financial_geopoint_id, amount, type, description, date } = req.body;
             const user_id = req.user?.userId;
 
             if (!user_id) {
@@ -30,7 +30,7 @@ export class TransactionController {
                 const newTransaction = await prismaClient.transaction.create({
                     data: {
                         user_id: user_id,
-                        tag,
+                        tag_id,
                         financial_geopoint_id,
                         amount: numericAmount,
                         type,

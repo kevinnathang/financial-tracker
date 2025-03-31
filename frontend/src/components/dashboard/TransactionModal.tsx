@@ -82,7 +82,7 @@ const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onClose }) 
                 amount: amount,
                 type: type,
                 description: description || undefined,
-                tag_id: tag || undefined,
+                tag_id: tag ? tag : undefined,
                 date: date ? new Date(date) : undefined
             })
             
@@ -169,12 +169,11 @@ const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onClose }) 
                             value={tag} 
                             onChange={(e) => setTag(e.target.value)}
                         >
-                            {/* You would dynamically populate these options from your backend */}
-                            <option value="1">Food</option>
-                            <option value="2">Transportation</option>
-                            <option value="3">Entertainment</option>
-                            <option value="4">Utilities</option>
-                            <option value="5">Salary</option>
+                            {data.tags.map((tagItem) => (
+                                <option key={tagItem.id} value={tagItem.id}>
+                                    {tagItem.name}
+                                </option>
+                            ))}
                         </Select>
                     </FormControl>
                 </Stack>
