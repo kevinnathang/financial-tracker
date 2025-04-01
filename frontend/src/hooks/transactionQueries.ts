@@ -3,10 +3,10 @@ import { useQuery, useMutation, useQueryClient } from 'react-query';
 import transactionService, { 
   TransactionPayload, 
   TransactionListResponse,
-  MonthlyStats
+  MonthlyStats,
+  UpdateTransactionPayload
 } from '../services/transactionService';
 
-// Query keys
 export const TRANSACTION_KEYS = {
   all: ['transactions'] as const,
   lists: () => [...TRANSACTION_KEYS.all, 'list'] as const,
@@ -14,7 +14,6 @@ export const TRANSACTION_KEYS = {
   stats: () => [...TRANSACTION_KEYS.all, 'stats'] as const,
 };
 
-// Get transactions with optional filtering
 export const useTransactions = () => {
   return useQuery<TransactionListResponse, Error>(
     TRANSACTION_KEYS.lists(),
@@ -22,7 +21,6 @@ export const useTransactions = () => {
   );
 };
 
-// Get monthly stats for dashboard
 export const useMonthlyStats = () => {
   return useQuery<MonthlyStats, Error>(
     TRANSACTION_KEYS.stats(),
@@ -30,19 +28,15 @@ export const useMonthlyStats = () => {
   );
 };
 
-// Create a new transaction
 export const useCreateTransaction = () => {
   const queryClient = useQueryClient();
   
   return useMutation<any, Error, TransactionPayload>(
     (transaction) => transactionService.createTransaction(transaction),
     {
-      // When a transaction is created, invalidate relevant queries
       onSuccess: () => {
-        // Invalidate the transaction list
         queryClient.invalidateQueries(TRANSACTION_KEYS.lists());
         
-        // Invalidate monthly stats
         queryClient.invalidateQueries(TRANSACTION_KEYS.stats());
       }
     }
@@ -60,7 +54,6 @@ export const useDeleteTransaction = () => {
       return response;
     },
     {
-      // When a transaction is deleted, invalidate relevant queries
       onSuccess: () => {
         console.log('QUERY - Delete transaction successful, invalidating queries...');
         queryClient.invalidateQueries(TRANSACTION_KEYS.lists());
@@ -71,6 +64,32 @@ export const useDeleteTransaction = () => {
       },
       onSettled: () => {
         console.log('QUERY - Delete transaction mutation settled (either success or failure).');
+      }
+    }
+  );
+};
+
+export const useUpdateTransaction = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation<any, Error, UpdateTransactionPayload>(
+    async ({ transactionId, ...transactionData }) => {
+      console.log(`QUERY - Attempting to update transaction with ID: ${transactionId}`);
+      const response = await transactionService.updateTransaction(transactionId, transactionData);
+      console.log(`QUERY - Transaction ${transactionId} updated successfully`);
+      return response;
+    },
+    {
+      onSuccess: () => {
+        console.log('QUERY - Update transaction successful, invalidating queries...');
+        queryClient.invalidateQueries(TRANSACTION_KEYS.lists());
+        queryClient.invalidateQueries(TRANSACTION_KEYS.stats());
+      },
+      onError: (error, { transactionId }) => {
+        console.error(`QUERY - Error Updating transaction with ID: ${transactionId}`, error);
+      },
+      onSettled: () => {
+        console.log('QUERY - Update transaction mutation settled (either success or failure).');
       }
     }
   );

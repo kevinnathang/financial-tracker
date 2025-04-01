@@ -2,17 +2,14 @@ import React from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { useUserData } from '../hooks/userQueries';
 
-// Auth Pages
 import Login from '../pages/Login';
 import Register from '../pages/Register';
 import RequestResetPassword from '../pages/RequestResetPassword';
 import ResetPassword from '../pages/ResetPassword';
 
-// Dashboard Pages
 import Dashboard from '../pages/Dashboard';
 import Tags from '../pages/Tags'
 
-// Protected route wrapper
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const { data: user, isLoading } = useUserData();
   

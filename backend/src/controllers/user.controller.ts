@@ -9,16 +9,13 @@ export class UserController {
         try {
             const { email, password, full_name } = req.body;
 
-            // Check if user already exists
             const existingUser = await prisma.user.findUnique({ where: { email } });
             if (existingUser) {
                 return res.status(400).json({ message: 'User already exists' });
             }
 
-            // Hash password
             const hashedPassword = await hash(password, 10);
 
-            // Create new user
             const user = await prisma.user.create({
                 data: {
                     email,
@@ -27,7 +24,6 @@ export class UserController {
                 }
             });
 
-            // Generate JWT
             const jwtSecret: Secret = process.env.JWT_SECRET || 'default-secret';
             const jwtOptions: SignOptions = { expiresIn: 24 * 60 * 60 };
             const token = jwt.sign(
@@ -113,7 +109,6 @@ export class UserController {
             const { email, full_name } = req.body;
             const userId = req.user?.userId;
 
-            // Update user
             const user = await prisma.user.update({
                 where: { id: userId },
                 data: {

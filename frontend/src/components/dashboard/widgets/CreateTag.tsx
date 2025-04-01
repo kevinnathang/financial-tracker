@@ -22,14 +22,13 @@ type IconComponentType = React.ComponentType<{ size?: number }>;
 const CreateTag: React.FC = () => {
   const { data, isLoading, isError } = useTags();
   const [ name, setName ] = useState('');
-  const [ color, setColor ] = useState('#3182CE'); // Default blue color
+  const [ color, setColor ] = useState('#3182CE');
   const [ icon, setIcon ] = useState('FiPieChart');
   const [ isSubmitting, setIsSubmitting ] = useState(false);
   const tagMutation = useCreateTag();
   const toast = useToast();
   
   
-  // Handle loading state
   if (isLoading) {
     return (
       <Box p={4} bg="white" borderRadius="lg" boxShadow="sm" textAlign="center">
@@ -39,7 +38,6 @@ const CreateTag: React.FC = () => {
     );
   }
   
-  // Handle error state
   if (isError || !data) {
     return (
       <Box p={4} bg="red.50" color="red.500" borderRadius="lg">
@@ -80,7 +78,6 @@ const CreateTag: React.FC = () => {
         isClosable: true,
       });
       
-      // Reset form and close modal
       resetForm();
     } catch (error) {
       toast({
@@ -101,7 +98,6 @@ const CreateTag: React.FC = () => {
     setIcon('FiPieChart');
   };
   
-  // Available icons for selection
   const iconOptions = [
     { value: 'FiDollarSign', label: 'Dollar Sign', icon: FiDollarSign as IconComponentType },
     { value: 'FiArrowUpRight', label: 'Arrow Up', icon: FiArrowUpRight as IconComponentType },
@@ -109,7 +105,6 @@ const CreateTag: React.FC = () => {
     { value: 'FiPieChart', label: 'Pie Chart', icon: FiPieChart as IconComponentType }
   ];
   
-  // Predefined color options
   const colorOptions = [
     { value: '#3182CE', label: 'Blue' },
     { value: '#38A169', label: 'Green' },

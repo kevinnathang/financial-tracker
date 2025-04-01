@@ -1,21 +1,18 @@
 module.exports = {
     webpack: {
         configure: (webpackConfig) => {
-            // Fix ESM/CommonJS interoperability issues
             webpackConfig.module.rules.push({
                 test: /\.mjs$/,
                 include: /node_modules/,
                 type: 'javascript/auto'
             });
 
-            // Fix potential polyfill issues
             webpackConfig.resolve.fallback = {
                 ...webpackConfig.resolve.fallback,
                 'stream': require.resolve('stream-browserify'),
                 'process': require.resolve('process/browser')
             };
 
-            // Add process polyfill
             const { DefinePlugin } = require('webpack');
             webpackConfig.plugins.push(
                 new DefinePlugin({
@@ -26,7 +23,6 @@ module.exports = {
             return webpackConfig;
         }
     },
-    // Customize Babel with consistent loose mode settings
     babel: {
         looseMode: true,
         presets: [
@@ -41,7 +37,6 @@ module.exports = {
             '@babel/plugin-transform-runtime'
         ]
     },
-    // Fix Jest configuration for testing
     jest: {
         configure: {
             moduleNameMapper: {

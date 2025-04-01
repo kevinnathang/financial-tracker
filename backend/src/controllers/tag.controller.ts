@@ -11,12 +11,10 @@ export class TagController {
                 return res.status(401).json({ message: 'Unauthorized' });
             }
 
-            // Check for required fields
             if (!name || !color) {
                 return res.status(400).json({ message: 'Name and color are required' });
             }
 
-            // Check if tag already exists for this user
             const existingTag = await prisma.tag.findFirst({
                 where: {
                     name,

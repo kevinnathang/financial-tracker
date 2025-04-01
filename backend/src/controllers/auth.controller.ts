@@ -12,19 +12,16 @@ export class AuthController {
         try {
             const { email, password } = req.body;
 
-            // Find user
             const user = await prisma.user.findUnique({ where: { email } });
             if (!user) {
                 return res.status(401).json({ message: 'Invalid credentials' });
             }
 
-            // Verify password
             const isValidPassword = await compare(password, user.password_hash);
             if (!isValidPassword) {
                 return res.status(401).json({ message: 'Invalid credentials' });
             }
 
-            // Generate JWT
             const jwtSecret: Secret = process.env.JWT_SECRET || 'default-secret';
             const jwtOptions: SignOptions = { expiresIn: 24 * 60 * 60 };
             const token = jwt.sign(

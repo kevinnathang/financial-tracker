@@ -64,36 +64,43 @@ export interface TransactionPayload {
   date?: Date;
 }
 
+export interface UpdateTransactionPayload extends TransactionPayload {
+  transactionId: string;
+}
+
 export const transactionService = {
-  // Create a new transaction
   createTransaction: async (transaction: TransactionPayload) => {
     const response = await api.post('/transactions', transaction);
     return response.data;
   },
   
-  // Get user transactions with optional filters
   getTransactions: async () => {
     const response = await api.get('/transactions');
     return response.data;
   },
   
-  // Get monthly transaction statistics for the dashboard
   getMonthlyStats: async (): Promise<MonthlyStats> => {
     const response = await api.get('/transactions/monthly-stats');
     return response.data;
   },
-  
+
   deleteTransaction: async (transactionId: string) => {
     try {
-      console.log(`SERVICE - Attempting to delete transaction with ID: ${transactionId}`);
-      
       const response = await api.delete(`/transactions/${transactionId}`);
-      
-      console.log('SERVICE - Delete response:', response);
       return response.data;
     } catch (error) {
       console.error('SERVICE - Error in deleteTransaction:', error);
-      throw error; // Rethrow to propagate error to caller
+      throw error; 
+    }
+  },
+
+  updateTransaction: async (transactionId: string, transactionData: TransactionPayload): Promise<any> => {
+    try {
+      const response = await api.patch(`/transactions/${transactionId}`, transactionData);
+      return response.data
+    } catch (error) {
+      console.error('SERVICE - Error in updateTransaction:', error);
+      throw error;
     }
   }
 };

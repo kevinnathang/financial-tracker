@@ -25,13 +25,11 @@ export interface CreateTagResponse {
 }
 
 export const tagService = {
-  // Create tags
   createTag: async (tag: TagPayload): Promise<CreateTagResponse> => {
     const response = await api.post('/tag', tag);
     return response.data;
   },
   
-  // Get user tags
   getTags: async (): Promise<TagListResponse> => {
     const response = await api.get('/tag');
     return response.data;

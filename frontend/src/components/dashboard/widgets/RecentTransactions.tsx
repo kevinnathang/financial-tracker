@@ -5,27 +5,39 @@ import { useHistory } from 'react-router-dom';
 import { ChakraIcon } from '../../ui/ChakraIcon';
 import { useTransactions, useDeleteTransaction } from '../../../hooks/transactionQueries';
 import TransactionModal from '../TransactionModal';
+import { Transaction } from '../../../services/transactionService';
 
 const RecentTransactions: React.FC = () => {
   const history = useHistory();
   const { data, isLoading, isError } = useTransactions();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | undefined>(undefined);
   const { mutate: deleteTransaction } = useDeleteTransaction();
   
-  const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  const openModal = () => {
+    setSelectedTransaction(undefined); 
+    setIsModalOpen(true);
+  };
+  
+  const openUpdateModal = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+    setIsModalOpen(true);
+  };
+  
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedTransaction(undefined);
+  };
 
   const getIconComponent = (iconName: string) => {
-    return Icons[iconName as keyof typeof Icons] || Icons.FiTag; // Default to FiTag if not found
+    return Icons[iconName as keyof typeof Icons] || Icons.FiTag; 
   };
 
   const handleDelete = (transactionId: string) => {
-    // Call the deleteTransaction mutation to delete the transaction
     console.log(transactionId)
     deleteTransaction(transactionId);
   };
 
-  // Handle loading state
   if (isLoading) {
     return (
       <Box p={4} bg="white" borderRadius="lg" boxShadow="sm" textAlign="center">
@@ -35,7 +47,6 @@ const RecentTransactions: React.FC = () => {
     );
   }
 
-  // Handle error state
   if (isError || !data) {
     return (
       <Box p={4} bg="red.50" color="red.500" borderRadius="lg">
@@ -44,7 +55,6 @@ const RecentTransactions: React.FC = () => {
     );
   }
 
-  // Extract the transactions array from the response
   const transactions = data.transactions || [];
 
   return (
@@ -83,6 +93,7 @@ const RecentTransactions: React.FC = () => {
                 <Th>Description</Th>
                 <Th>Date</Th>
                 <Th isNumeric>Amount</Th>
+                <Th>Actions</Th>
               </Tr>
             </Thead>
             <Tbody>
@@ -106,13 +117,22 @@ const RecentTransactions: React.FC = () => {
                     {transaction.type === 'income' ? '+' : '-'}{transaction.amount}
                   </Td>
                   <Td>
-                    <IconButton
-                      aria-label="Delete Transaction"
-                      icon={<ChakraIcon icon={Icons.FiTrash2} />}
-                      colorScheme="red"
-                      size="sm"
-                      onClick={() => handleDelete(transaction.id)} // Call delete on click
-                    />
+                    <Flex gap={2}>
+                      <IconButton
+                        aria-label="Update Transaction"
+                        icon={<ChakraIcon icon={Icons.FiEdit} />}
+                        colorScheme="blue"
+                        size="sm"
+                        onClick={() => openUpdateModal(transaction)}
+                      />
+                      <IconButton
+                        aria-label="Delete Transaction"
+                        icon={<ChakraIcon icon={Icons.FiTrash2} />}
+                        colorScheme="red"
+                        size="sm"
+                        onClick={() => handleDelete(transaction.id)}
+                      />
+                    </Flex>
                   </Td>
                 </Tr>
               ))}
@@ -121,8 +141,12 @@ const RecentTransactions: React.FC = () => {
         </Box>
       )}
       
-      {/* Transaction Modal */}
-      <TransactionModal isOpen={isModalOpen} onClose={closeModal} />
+      {/* Transaction Modal - now passing the selectedTransaction */}
+      <TransactionModal 
+        isOpen={isModalOpen} 
+        onClose={closeModal} 
+        transaction={selectedTransaction}
+      />
     </Box>
   );
 };

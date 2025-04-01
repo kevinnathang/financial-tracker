@@ -5,25 +5,22 @@ import tagService, {
   TagPayload
 } from '../services/tagService';
 
-// Query keys
 export const TAG_KEYS = {
   all: ['tags'] as const,
   lists: () => [...TAG_KEYS.all, 'list'] as const,
 };
 
-// Get tags
 export const useTags = () => {
   return useQuery<TagListResponse, Error>(
     TAG_KEYS.lists(),
     tagService.getTags,
     {
-      staleTime: 5 * 60 * 1000, // 5 minutes
+      staleTime: 5 * 60 * 1000, 
       retry: 2
     }
   );
 };
 
-// Create new tag
 export const useCreateTag = () => {
   const queryClient = useQueryClient();
   
@@ -31,7 +28,6 @@ export const useCreateTag = () => {
     (tag) => tagService.createTag(tag),
     {
       onSuccess: () => {
-        // Invalidate and refetch the tags list after creating a new tag
         queryClient.invalidateQueries(TAG_KEYS.lists());
       }
     }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -23,15 +23,21 @@ import {
   Spinner,
   Text
 } from '@chakra-ui/react';
-import { useCreateTransaction } from '../../hooks/transactionQueries';
+import { useCreateTransaction, useUpdateTransaction } from '../../hooks/transactionQueries';
 import { useTags } from '../../hooks/tagQueries';
+import { Transaction } from '../../services/transactionService';
 
 interface TransactionModalProps {
   isOpen: boolean;
   onClose: () => void;
+  transaction?: Transaction; 
 }
 
-const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onClose }) => {
+const TransactionModal: React.FC<TransactionModalProps> = ({ 
+  isOpen, 
+  onClose, 
+  transaction
+}) => {
     const { data, isLoading, isError } = useTags();
 
     const [amount, setAmount] = useState<number>(0);
@@ -41,10 +47,26 @@ const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onClose }) 
     const [type, setType] = useState<'income' | 'expense'>('income');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const transactionMutation = useCreateTransaction()
+    const createMutation = useCreateTransaction();
+    const updateMutation = useUpdateTransaction();
     const toast = useToast();
 
-    // Handle loading state
+    useEffect(() => {
+        if (transaction) {
+            setAmount(transaction.amount);
+            setDescription(transaction.description || '');
+            setDate(transaction.date ? new Date(transaction.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]);
+            setTag(transaction.tag_id || '');
+            setType(transaction.type.toLowerCase() as 'income' | 'expense');
+        } else {
+            setDescription('');
+            setAmount(0);
+            setDate(new Date().toISOString().split('T')[0]);
+            setTag('');
+            setType('expense');
+        }
+    }, [transaction, isOpen]);
+
     if (isLoading) {
         return (
             <Box p={4} bg="white" borderRadius="lg" boxShadow="sm" textAlign="center">
@@ -54,7 +76,6 @@ const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onClose }) 
         );
     }
     
-    // Handle error state
     if (isError || !data) {
         return (
             <Box p={4} bg="red.50" color="red.500" borderRadius="lg">
@@ -66,11 +87,11 @@ const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onClose }) 
     const handleSubmit = async () => {
         if (!type || !amount || !date) {
             toast({
-            title: 'Error',
-            description: 'Please fill all required fields',
-            status: 'error',
-            duration: 3000,
-            isClosable: true,
+                title: 'Error',
+                description: 'Please fill all required fields',
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
             });
             return;
         }
@@ -78,44 +99,51 @@ const TransactionModal: React.FC<TransactionModalProps> = ({ isOpen, onClose }) 
         try {
             setIsSubmitting(true);
             
-            await transactionMutation.mutateAsync({
+            const transactionData = {
                 amount: amount,
                 type: type,
                 description: description || undefined,
                 tag_id: tag ? tag : undefined,
                 date: date ? new Date(date) : undefined
-            })
+            };
             
-            toast({
-            title: 'Success',
-            description: 'Transaction created successfully',
-            status: 'success',
-            duration: 3000,
-            isClosable: true,
-            });
+            if (transaction) {
+                await updateMutation.mutateAsync({
+                    ...transactionData,
+                    transactionId: transaction.id
+                });
+                
+                toast({
+                    title: 'Success',
+                    description: 'Transaction updated successfully',
+                    status: 'success',
+                    duration: 3000,
+                    isClosable: true,
+                });
+            } else {
+                await createMutation.mutateAsync(transactionData);
+                
+                toast({
+                    title: 'Success',
+                    description: 'Transaction created successfully',
+                    status: 'success',
+                    duration: 3000,
+                    isClosable: true,
+                });
+            }
             
-            // Reset form and close modal
-            resetForm();
             onClose();
         } catch (error) {
             toast({
-            title: 'Error',
-            description: error instanceof Error ? error.message : 'Failed to create transaction',
-            status: 'error',
-            duration: 3000,
-            isClosable: true,
+                title: 'Error',
+                description: error instanceof Error ? error.message : 'Failed to save transaction',
+                status: 'error',
+                duration: 3000,
+                isClosable: true,
             });
         } finally {
             setIsSubmitting(false);
         }
-    };
-
-    const resetForm = () => {
-        setDescription('');
-        setAmount(0);
-        setDate(new Date().toISOString().split('T')[0]);
-        setTag('');
-        setType('expense');
     };
 
     return (

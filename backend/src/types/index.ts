@@ -23,7 +23,7 @@ export interface Tag {
 
 export interface GeoPoint {
     type: 'Point';
-    coordinates: [number, number]; // [longitude, latitude]
+    coordinates: [number, number];
 }
 
 export interface FinancialGeopoint {

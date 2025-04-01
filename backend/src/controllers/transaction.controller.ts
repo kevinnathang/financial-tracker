@@ -7,13 +7,12 @@ export class TransactionController {
     static async createTransaction(req: Request, res: Response) {
         try {
             const { tag_id, financial_geopoint_id, amount, type, description, date } = req.body;
-            const user_id = req.user?.userId;
+            const userId = req.user?.userId;
 
-            if (!user_id) {
+            if (!userId) {
                 return res.status(401).json({ message: 'Unauthorized' });
             }
 
-            // Validate required fields
             if (!amount || !type) {
                 return res.status(400).json({
                     message: 'Missing required fields',
@@ -24,12 +23,10 @@ export class TransactionController {
             const numericAmount = new Prisma.Decimal(amount);
             const transactionDate = date ? new Date(date) : new Date();
 
-            // Start a transaction to ensure both operations succeed or fail together
             const result = await prisma.$transaction(async (prismaClient) => {
-                // Create the transaction
                 const newTransaction = await prismaClient.transaction.create({
                     data: {
-                        user_id: user_id,
+                        user_id: userId,
                         tag_id,
                         financial_geopoint_id,
                         amount: numericAmount,
@@ -39,11 +36,10 @@ export class TransactionController {
                     },
                 });
 
-                // Update user balance
                 const balanceChange = type.toLowerCase() === 'income' ? numericAmount : numericAmount.negated();
 
                 const updatedUser = await prismaClient.user.update({
-                    where: { id: user_id },
+                    where: { id: userId },
                     data: {
                         balance: {
                             increment: balanceChange,
@@ -74,9 +70,9 @@ export class TransactionController {
 
     static async getTransactions(req: Request, res: Response) {
         try {
-            const user_id = req.user?.userId
+            const userId = req.user?.userId
             const transactions = await prisma.transaction.findMany({
-                where: { user_id: user_id },
+                where: { user_id: userId },
                 include: {
                     tag: true,
                     financialGeopoint: true,
@@ -100,16 +96,13 @@ export class TransactionController {
                 return res.status(401).json({ message: 'Unauthorized' });
             }
 
-            // Get current month
             const today = new Date();
             const currentMonthStart = startOfMonth(today);
             const currentMonthEnd = endOfMonth(today);
 
-            // Get previous month
             const previousMonthStart = startOfMonth(subMonths(today, 1));
             const previousMonthEnd = endOfMonth(subMonths(today, 1));
 
-            // Get current month transactions
             const currentMonthTransactions = await prisma.transaction.findMany({
                 where: {
                     user_id: userId,
@@ -120,7 +113,6 @@ export class TransactionController {
                 }
             });
 
-            // Get previous month transactions
             const previousMonthTransactions = await prisma.transaction.findMany({
                 where: {
                     user_id: userId,
@@ -131,7 +123,6 @@ export class TransactionController {
                 }
             });
 
-            // Calculate stats for current month
             const currentMonthIncome = currentMonthTransactions
                 .filter(t => t.type.toLowerCase() === 'income')
                 .reduce((sum, t) => sum + Number(t.amount), 0);
@@ -142,7 +133,6 @@ export class TransactionController {
 
             const currentMonthBalance = currentMonthIncome - currentMonthExpenses;
 
-            // Calculate stats for previous month
             const previousMonthIncome = previousMonthTransactions
                 .filter(t => t.type.toLowerCase() === 'income')
                 .reduce((sum, t) => sum + Number(t.amount), 0);
@@ -153,7 +143,6 @@ export class TransactionController {
 
             const previousMonthBalance = previousMonthIncome - previousMonthExpenses;
 
-            // Calculate percentage changes
             const calculatePercentageChange = (current: number, previous: number) => {
                 if (previous === 0) return current > 0 ? 100 : 0;
                 return ((current - previous) / previous) * 100;
@@ -189,37 +178,34 @@ export class TransactionController {
     static async deleteTransaction(req: Request, res: Response) {
         console.log("called method in controller")
         try {
-            const user_id = req.user?.userId;
+            const userId = req.user?.userId;
             const { transactionId } = req.params;
-            console.log(transactionId, user_id)
+            console.log(transactionId, userId)
 
-            if (!user_id) {
+            if (!userId) {
                 return res.status(401).json({ message: 'Unauthorized' });
             }
 
-            // Find the transaction to get the amount and type
             const transaction = await prisma.transaction.findUnique({
                 where: { id: transactionId },
                 select: { amount: true, type: true, user_id: true }
             });
 
-            if (!transaction || transaction.user_id !== user_id) {
+            if (!transaction || transaction.user_id !== userId) {
                 return res.status(404).json({ message: 'Transaction not found' });
             }
 
-            // Calculate balance adjustment
             const balanceChange = transaction.type.toLowerCase() === 'income'
-                ? new Prisma.Decimal(transaction.amount).negated() // Subtract income
-                : new Prisma.Decimal(transaction.amount); // Add back expense
+                ? new Prisma.Decimal(transaction.amount).negated()
+                : new Prisma.Decimal(transaction.amount);
 
-            // Start a transaction to delete and update balance
             await prisma.$transaction(async (prismaClient) => {
                 await prismaClient.transaction.delete({
                     where: { id: transactionId },
                 });
 
                 await prismaClient.user.update({
-                    where: { id: user_id },
+                    where: { id: userId },
                     data: {
                         balance: {
                             increment: balanceChange,
@@ -233,6 +219,109 @@ export class TransactionController {
         } catch (error) {
             console.error('Delete transaction error:', error);
             return res.status(500).json({ message: 'Error deleting transaction', error });
+        }
+    }
+
+    static async updateTransaction(req: Request, res: Response) {
+        console.log("calling update transaction controller")
+        try {
+            const userId = req.user?.userId;
+            const { transactionId } = req.params;
+            const { tag_id, financial_geopoint_id, amount, type, description, date } = req.body;
+            console.log(tag_id, financial_geopoint_id, amount, type, description, date)
+            console.log(userId, transactionId)
+
+            if (!userId) {
+                return res.status(401).json({ message: 'Unauthorized' });
+            }
+            console.log("ok 1")
+
+            if (!amount || !type) {
+                return res.status(400).json({
+                    message: 'Missing required fields',
+                    required: ['amount', 'type']
+                });
+            }
+
+            console.log("ok 2")
+
+            const existingTransaction = await prisma.transaction.findUnique({
+                where: { id: transactionId },
+                select: { amount: true, type: true, user_id: true, date: true }
+            });
+
+            if (!existingTransaction) {
+                return res.status(404).json({ message: 'Transaction not found' });
+            }
+
+            if (existingTransaction.user_id !== userId) {
+                return res.status(403).json({ message: 'Access denied' });
+            }
+
+            const newAmount = new Prisma.Decimal(amount);
+            const newType = type.toLowerCase();
+            const transactionDate = date ? new Date(date) : existingTransaction.date;
+
+            let balanceAdjustment = new Prisma.Decimal(0);
+
+            if (existingTransaction.type.toLowerCase() === 'income') {
+                balanceAdjustment = balanceAdjustment.minus(existingTransaction.amount);
+            } else {
+                balanceAdjustment = balanceAdjustment.plus(existingTransaction.amount);
+            }
+
+            if (newType === 'income') {
+                balanceAdjustment = balanceAdjustment.plus(newAmount);
+            } else {
+                balanceAdjustment = balanceAdjustment.minus(newAmount);
+            }
+
+            console.log("here ok")
+
+            const result = await prisma.$transaction(async (prismaClient) => {
+                const updatedTransaction = await prismaClient.transaction.update({
+                    where: { id: transactionId },
+                    data: {
+                        tag_id,
+                        financial_geopoint_id,
+                        amount: newAmount,
+                        type,
+                        description,
+                        date: transactionDate,
+                    },
+                    include: {
+                        tag: true,
+                        financialGeopoint: true,
+                    }
+                });
+
+                const updatedUser = await prismaClient.user.update({
+                    where: { id: userId },
+                    data: {
+                        balance: {
+                            increment: balanceAdjustment,
+                        },
+                    },
+                    select: {
+                        balance: true
+                    }
+                });
+
+                return {
+                    transaction: updatedTransaction,
+                    balance: updatedUser.balance
+                };
+            });
+
+            return res.status(200).json({
+                message: 'Transaction updated successfully',
+                transaction: result.transaction,
+                balance: result.balance
+            });
+
+        } catch (error) {
+            console.error('Update transaction error:', error);
+            return res.status(500).json({ message: 'Error updating transaction', error });
         }
     }
 }

@@ -6,7 +6,6 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import AppRoutes from './routes/AppRoutes';
 import { queryClient } from './lib/reactQuery';
 
-// Create a theme with toast configuration
 const theme = extendTheme({
   config: {
     initialColorMode: 'light',
@@ -16,7 +15,7 @@ const theme = extendTheme({
     Toast: {
       baseStyle: {
         container: {
-          zIndex: 9999, // High z-index to ensure toasts appear above all content
+          zIndex: 9999, 
         },
       },
     },

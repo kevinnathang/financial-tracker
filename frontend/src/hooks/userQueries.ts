@@ -10,35 +10,24 @@ export interface User {
   balance: number;
 }
 
-// Key for caching user data
 export const USER_QUERY_KEY = 'userData';
 
-// Fetch current user data (can be used both on initial load or after login)
 export const useUserData = () => {
   return useQuery<User | null>(
     USER_QUERY_KEY,
     async () => {
-      // Try to get from localStorage first
       const userData = localStorage.getItem('user');
       if (userData) {
         return JSON.parse(userData);
       }
-      
-      // If no userData in localStorage but token exists, you could 
-      // fetch from API (would need to add this endpoint)
-      // Example: const response = await authService.getCurrentUser();
-      // return response.data;
-      
       return null;
     },
     {
-      // Don't refetch on component mount if we already have data
       refetchOnMount: false,
     }
   );
 };
 
-// Login mutation
 export const useLogin = () => {
   return useMutation(
     async (credentials: { email: string; password: string }) => {
@@ -46,18 +35,15 @@ export const useLogin = () => {
     },
     {
       onSuccess: (data) => {
-        // Store in localStorage
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         
-        // Update React Query cache
         queryClient.setQueryData(USER_QUERY_KEY, data.user);
       },
     }
   );
 };
 
-// Logout mutation
 export const useLogout = () => {
   return useMutation(
     async () => {
@@ -65,18 +51,15 @@ export const useLogout = () => {
     },
     {
       onSuccess: () => {
-        // Clear localStorage
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         
-        // Clear React Query cache
         queryClient.setQueryData(USER_QUERY_KEY, null);
       },
     }
   );
 };
 
-// Register mutation
 export const useRegister = () => {
   return useMutation(
     async (userData: { email: string; password: string; full_name: string }) => {
@@ -88,25 +71,21 @@ export const useRegister = () => {
     },
     {
       onSuccess: (data) => {
-        // Store in localStorage
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
         
-        // Update React Query cache
         queryClient.setQueryData(USER_QUERY_KEY, data.user);
       },
     }
   );
 };
 
-// Request password reset mutation
 export const useRequestPasswordReset = () => {
   return useMutation(async (email: string) => {
     return await authService.requestResetPassword(email);
   });
 };
 
-// Reset password mutation
 export const useResetPassword = () => {
   return useMutation(
     async (data: { token: string; password: string }) => {
