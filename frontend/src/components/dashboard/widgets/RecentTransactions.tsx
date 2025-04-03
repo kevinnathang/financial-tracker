@@ -112,7 +112,7 @@ const RecentTransactions: React.FC = () => {
                       <Text fontWeight="medium">{transaction.description}</Text>
                     </Flex>
                   </Td>
-                  <Td>{transaction.date}</Td>
+                  <Td>{new Date(transaction.date).toLocaleDateString('en-GB')}</Td>
                   <Td isNumeric fontWeight="medium" color={transaction.type === 'income' ? 'green.500' : 'red.500'}>
                     {transaction.type === 'income' ? '+' : '-'}{transaction.amount}
                   </Td>
