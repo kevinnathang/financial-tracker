@@ -70,18 +70,33 @@ export interface UpdateTransactionPayload extends TransactionPayload {
 
 export const transactionService = {
   createTransaction: async (transaction: TransactionPayload) => {
-    const response = await api.post('/transactions', transaction);
-    return response.data;
+    try {
+      const response = await api.post('/transactions', transaction);
+      return response.data;
+    } catch (error) {
+      console.error('SERVICE - Error in createTransaction:', error);
+      throw error; 
+    }
   },
   
   getTransactions: async () => {
-    const response = await api.get('/transactions');
-    return response.data;
+    try {
+      const response = await api.get('/transactions');
+      return response.data;
+    } catch (error) {
+      console.error('SERVICE - Error in getTransactions:', error);
+      throw error; 
+    }
   },
   
   getMonthlyStats: async (): Promise<MonthlyStats> => {
-    const response = await api.get('/transactions/monthly-stats');
-    return response.data;
+    try {
+      const response = await api.get('/transactions/monthly-stats');
+      return response.data;
+    } catch (error) {
+      console.error('SERVICE - Error in getMonthlyStats:', error);
+      throw error; 
+    }
   },
 
   deleteTransaction: async (transactionId: string) => {

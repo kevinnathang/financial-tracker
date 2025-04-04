@@ -11,7 +11,6 @@ interface DashboardLayoutProps {
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   return (
     <Flex height="100vh" width="full">
-      {/* Sidebar */}
       <Box
         width="250px"
         bg="gray.800"
@@ -23,14 +22,12 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         <Sidebar />
       </Box>
 
-      {/* Main Content Area */}
       <Flex
         direction="column"
         ml="250px"
         width="calc(100% - 250px)"
         height="100vh"
       >
-        {/* Header */}
         <Box
           as="header"
           height="60px"
@@ -43,7 +40,6 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           <Header />
         </Box>
 
-        {/* Main Content */}
         <Box
           as="main"
           p={6}

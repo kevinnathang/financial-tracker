@@ -27,13 +27,11 @@ const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 const AppRoutes = () => {
   return (
     <Switch>
-      {/* Auth Routes */}
       <Route path="/login" component={Login} />
       <Route path="/register" component={Register} />
       <Route path="/reset-password/:token" component={ResetPassword} />
       <Route path="/request-reset-password" component={RequestResetPassword} />
       
-      {/* Dashboard Routes - Protected */}
       <Route
         path="/dashboard"
         exact
@@ -53,7 +51,6 @@ const AppRoutes = () => {
         )}
       />
       
-      {/* Default redirect */}
       <Route path="*">
         <Redirect to="/login" />
       </Route>

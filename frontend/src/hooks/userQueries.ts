@@ -40,6 +40,9 @@ export const useLogin = () => {
         
         queryClient.setQueryData(USER_QUERY_KEY, data.user);
       },
+      onError: () => {
+        console.error(`QUERY - Error using useLogin.`);
+      },
     }
   );
 };
@@ -56,6 +59,9 @@ export const useLogout = () => {
         
         queryClient.setQueryData(USER_QUERY_KEY, null);
       },
+      onError: () => {
+        console.error(`QUERY - Error using useLogout.`);
+      },
     }
   );
 };
@@ -63,7 +69,7 @@ export const useLogout = () => {
 export const useRegister = () => {
   return useMutation(
     async (userData: { email: string; password: string; full_name: string }) => {
-      return await userService.register(
+      return await userService.registerUser(
         userData.email,
         userData.password,
         userData.full_name
@@ -76,20 +82,35 @@ export const useRegister = () => {
         
         queryClient.setQueryData(USER_QUERY_KEY, data.user);
       },
+      onError: () => {
+        console.error(`QUERY - Error using useRegister.`);
+      },
     }
   );
 };
 
 export const useRequestPasswordReset = () => {
-  return useMutation(async (email: string) => {
-    return await authService.requestResetPassword(email);
-  });
-};
+  return useMutation(
+    async (email: string) => {
+      return await authService.requestResetPassword(email);
+    },
+    {
+      onError: () => {
+        console.error(`QUERY - Error using useRequestPasswordReset.`);
+      },
+    }
+  );
+}
 
 export const useResetPassword = () => {
   return useMutation(
     async (data: { token: string; password: string }) => {
       return await authService.resetPassword(data.token, data.password);
+    },
+    {
+      onError: () => {
+        console.error(`QUERY - Error using useResetPassword.`);
+      },
     }
   );
 };

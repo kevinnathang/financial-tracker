@@ -29,7 +29,10 @@ export const useCreateTag = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(TAG_KEYS.lists());
-      }
+      },
+      onError: (error) => {
+        console.error(`QUERY - Error using useCreateTag. ${error}`);
+      },
     }
   );
 };
@@ -46,15 +49,11 @@ export const useDeleteTag = () => {
     },
     {
       onSuccess: () => {
-        console.log('QUERY - Delete tag successful, invalidating queries...');
         queryClient.invalidateQueries(TAG_KEYS.lists());
       },
       onError: (error, tagId) => {
-        console.error(`QUERY - Error deleting tag with ID: ${tagId}`, error);
+        console.error(`QUERY - Error deleting tag with ID: ${tagId}`);
       },
-      onSettled: () => {
-        console.log('QUERY - Delete tag mutation settled (either success or failure).');
-      }
     }
   );
 };

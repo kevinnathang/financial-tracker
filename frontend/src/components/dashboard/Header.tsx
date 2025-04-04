@@ -25,12 +25,10 @@ const Header: React.FC = () => {
     >
       <Box>
         <Text fontSize="xl" fontWeight="bold">
-          {/* Dynamic title based on current page */}
           Dashboard
         </Text>
       </Box>
       <Flex alignItems="center">
-        {/* Notifications */}
         <Box position="relative" mr={4}>
           <ChakraIcon
             icon={FiBell}
@@ -49,7 +47,6 @@ const Header: React.FC = () => {
             bg="red.500"
           />
         </Box>
-        {/* User Profile Menu */}
         <Menu>
           <MenuButton>
             <Flex alignItems="center">

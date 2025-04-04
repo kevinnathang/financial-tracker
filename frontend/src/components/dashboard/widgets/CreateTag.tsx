@@ -224,7 +224,6 @@ const TagManagement: React.FC = () => {
         </Box>
       </GridItem>
       
-      {/* Tag List */}
       <GridItem>
         <Box p={6} bg="white" borderRadius="lg" boxShadow="md" height="100%">
           <Text fontSize="xl" fontWeight="bold" mb={4}>Your Tags</Text>
@@ -264,7 +263,6 @@ const TagManagement: React.FC = () => {
   );
 };
 
-// Helper functions to map color values to Chakra UI color schemes
 const getColorScheme = (colorHex: string): string => {
   const colorMap: Record<string, string> = {
     '#3182CE': 'blue',

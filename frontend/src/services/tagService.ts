@@ -26,13 +26,23 @@ export interface CreateTagResponse {
 
 export const tagService = {
   createTag: async (tag: TagPayload): Promise<CreateTagResponse> => {
-    const response = await api.post('/tag', tag);
-    return response.data;
+    try {
+      const response = await api.post('/tag', tag);
+      return response.data;
+    } catch (error) {
+      console.error('SERVICE - Error in createTag:', error);
+      throw error; 
+    }
   },
   
   getTags: async (): Promise<TagListResponse> => {
-    const response = await api.get('/tag');
-    return response.data;
+    try {
+      const response = await api.get('/tag');
+      return response.data;
+    } catch (error) {
+      console.error('SERVICE - Error in getTags:', error);
+      throw error; 
+    }
   },
 
   deleteTag: async(tagId: string) => {

@@ -15,16 +15,40 @@ export const TRANSACTION_KEYS = {
 };
 
 export const useTransactions = () => {
+  const queryClient = useQueryClient();
+
   return useQuery<TransactionListResponse, Error>(
     TRANSACTION_KEYS.lists(),
-    transactionService.getTransactions
+    transactionService.getTransactions,
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(TRANSACTION_KEYS.lists());
+        
+        queryClient.invalidateQueries(TRANSACTION_KEYS.stats());
+      },
+      onError: (error) => {
+        console.error(`QUERY - Error using useTransactions. ${error}`);
+      },
+    }
   );
 };
 
 export const useMonthlyStats = () => {
+  const queryClient = useQueryClient();
+
   return useQuery<MonthlyStats, Error>(
     TRANSACTION_KEYS.stats(),
-    transactionService.getMonthlyStats
+    transactionService.getMonthlyStats,
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(TRANSACTION_KEYS.lists());
+        
+        queryClient.invalidateQueries(TRANSACTION_KEYS.stats());
+      },
+      onError: (error) => {
+        console.error(`QUERY - Error getting monthly status. ${error}`);
+      },
+    }
   );
 };
 
@@ -38,7 +62,10 @@ export const useCreateTransaction = () => {
         queryClient.invalidateQueries(TRANSACTION_KEYS.lists());
         
         queryClient.invalidateQueries(TRANSACTION_KEYS.stats());
-      }
+      },
+      onError: (error) => {
+        console.error(`QUERY - Error creating transaction. ${error}`);
+      },
     }
   );
 };
@@ -48,23 +75,17 @@ export const useDeleteTransaction = () => {
 
   return useMutation<void, Error, string>(
     async (transactionId) => {
-      console.log(`QUERY - Attempting to delete transaction with ID: ${transactionId}`);
       const response = await transactionService.deleteTransaction(transactionId);
-      console.log(`QUERY - Transaction ${transactionId} deleted successfully`);
       return response;
     },
     {
       onSuccess: () => {
-        console.log('QUERY - Delete transaction successful, invalidating queries...');
         queryClient.invalidateQueries(TRANSACTION_KEYS.lists());
         queryClient.invalidateQueries(TRANSACTION_KEYS.stats());
       },
       onError: (error, transactionId) => {
-        console.error(`QUERY - Error deleting transaction with ID: ${transactionId}`, error);
+        console.error(`QUERY - Error deleting transaction with ID: ${transactionId}`);
       },
-      onSettled: () => {
-        console.log('QUERY - Delete transaction mutation settled (either success or failure).');
-      }
     }
   );
 };
@@ -74,23 +95,17 @@ export const useUpdateTransaction = () => {
   
   return useMutation<any, Error, UpdateTransactionPayload>(
     async ({ transactionId, ...transactionData }) => {
-      console.log(`QUERY - Attempting to update transaction with ID: ${transactionId}`);
       const response = await transactionService.updateTransaction(transactionId, transactionData);
-      console.log(`QUERY - Transaction ${transactionId} updated successfully`);
       return response;
     },
     {
       onSuccess: () => {
-        console.log('QUERY - Update transaction successful, invalidating queries...');
         queryClient.invalidateQueries(TRANSACTION_KEYS.lists());
         queryClient.invalidateQueries(TRANSACTION_KEYS.stats());
       },
       onError: (error, { transactionId }) => {
-        console.error(`QUERY - Error Updating transaction with ID: ${transactionId}`, error);
+        console.error(`QUERY - Error Updating transaction with ID: ${transactionId}`);
       },
-      onSettled: () => {
-        console.log('QUERY - Update transaction mutation settled (either success or failure).');
-      }
     }
   );
 };
