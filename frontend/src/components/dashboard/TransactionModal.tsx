@@ -104,7 +104,7 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
                 type: type,
                 description: description || undefined,
                 tag_id: tag ? tag : undefined,
-                date: date ? new Date(date) : undefined
+                date: date ? new Date(date) : undefined,
             };
             
             if (transaction) {

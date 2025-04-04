@@ -33,3 +33,28 @@ export const useCreateTag = () => {
     }
   );
 };
+
+export const useDeleteTag = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, string>(
+    async (tagId) => {
+      console.log(`QUERY - Attempting to delete tag with ID: ${tagId}`);
+      const response = await tagService.deleteTag(tagId);
+      console.log(`QUERY - Tag ${tagId} deleted successfully`);
+      return response;
+    },
+    {
+      onSuccess: () => {
+        console.log('QUERY - Delete tag successful, invalidating queries...');
+        queryClient.invalidateQueries(TAG_KEYS.lists());
+      },
+      onError: (error, tagId) => {
+        console.error(`QUERY - Error deleting tag with ID: ${tagId}`, error);
+      },
+      onSettled: () => {
+        console.log('QUERY - Delete tag mutation settled (either success or failure).');
+      }
+    }
+  );
+};

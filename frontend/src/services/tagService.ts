@@ -34,6 +34,16 @@ export const tagService = {
     const response = await api.get('/tag');
     return response.data;
   },
+
+  deleteTag: async(tagId: string) => {
+    try {
+      const response = await api.delete(`/tag/${tagId}`);
+      return response.data
+    } catch (error) {
+      console.error('SERVICE - Error in deleteTag:', error);
+      throw error; 
+    }
+  }
 };
 
 export default tagService;

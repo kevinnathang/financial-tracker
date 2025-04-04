@@ -29,10 +29,6 @@ const RecentTransactions: React.FC = () => {
     setSelectedTransaction(undefined);
   };
 
-  const getIconComponent = (iconName: string) => {
-    return Icons[iconName as keyof typeof Icons] || Icons.FiTag; 
-  };
-
   const handleDelete = (transactionId: string) => {
     console.log(transactionId)
     deleteTransaction(transactionId);
@@ -81,7 +77,6 @@ const RecentTransactions: React.FC = () => {
         </Flex>
       </Flex>
 
-      {/* Show appropriate content based on transaction list */}
       {transactions.length === 0 ? (
         <Text color="gray.500" py={4}>No transactions found.</Text>
       ) : (
@@ -102,7 +97,7 @@ const RecentTransactions: React.FC = () => {
                   <Td>
                     <Flex alignItems="center" gap={2}>
                     {transaction.tag?.icon && (
-                      <ChakraIcon icon={getIconComponent(transaction.tag.icon)} boxSize={4} />
+                      <Text fontSize="lg">{transaction.tag.icon}</Text>
                     )}
                       <Text fontWeight="medium">{transaction.tag?.name}</Text>
                     </Flex>
@@ -141,7 +136,6 @@ const RecentTransactions: React.FC = () => {
         </Box>
       )}
       
-      {/* Transaction Modal - now passing the selectedTransaction */}
       <TransactionModal 
         isOpen={isModalOpen} 
         onClose={closeModal} 
