@@ -17,10 +17,18 @@ import {
   GridItem,
   Badge,
   IconButton,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
 } from '@chakra-ui/react';
 import * as Icons from 'react-icons/fi';
-import { useCreateTag, useTags, useDeleteTag } from '../../../hooks/tagQueries';
+import { useCreateTag, useTags, useDeleteTag, useUpdateTag } from '../../../hooks/tagQueries';
 import { ChakraIcon } from '../../ui/ChakraIcon';
+import { Tag } from '../../../services/tagService';
 
 const TagManagement: React.FC = () => {
   const { data, isLoading, isError } = useTags();
@@ -28,7 +36,10 @@ const TagManagement: React.FC = () => {
   const [ color, setColor ] = useState('#3182CE');
   const [ icon, setIcon ] = useState('💵');
   const [ isSubmitting, setIsSubmitting ] = useState(false);
+  const [ isEditModalOpen, setIsEditModalOpen ] = useState(false);
+  const [ selectedTag, setSelectedTag ] = useState<Tag | undefined>(undefined);
   const tagMutation = useCreateTag();
+  const updateTagMutation = useUpdateTag();
   const toast = useToast();
   const { mutate: deleteTag } = useDeleteTag();
   
@@ -50,8 +61,63 @@ const TagManagement: React.FC = () => {
   }
 
   const handleDelete = (tagId: string) => {
-    console.log(tagId)
+    console.log(tagId);
     deleteTag(tagId);
+  };
+
+  const openEditModal = (tag: Tag) => {
+    setSelectedTag(tag);
+    setIsEditModalOpen(true);
+  };
+
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setSelectedTag(undefined);
+  };
+
+  const handleUpdate = async () => {
+    if (!selectedTag) return;
+
+    if (!selectedTag.name || !selectedTag.color) {
+      toast({
+        title: 'Error',
+        description: 'Please fill all required fields',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    try {
+      setIsSubmitting(true);
+      await updateTagMutation.mutateAsync({
+        tagId: selectedTag.id,
+        name: selectedTag.name,
+        color: selectedTag.color, 
+        icon: selectedTag.icon,
+      });
+      
+      toast({
+        title: 'Success',
+        description: 'Tag updated successfully',
+        status: 'success',
+        duration: 3000,
+        isClosable: true,
+      });
+      
+      closeEditModal();
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'Failed to update tag',
+        status: 'error',
+        duration: 3000,
+        isClosable: true,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const tags = data.tags || [];
@@ -239,13 +305,22 @@ const TagManagement: React.FC = () => {
                       {getColorName(tag.color)}
                     </Badge>
                   </HStack>
-                  <IconButton
-                    aria-label="Delete Tag"
-                    icon={<ChakraIcon icon={Icons.FiTrash2} />}
-                    colorScheme="red"
-                    size="sm"
-                    onClick={() => handleDelete(tag.id)}
-                  />
+                  <HStack>
+                    <IconButton
+                      aria-label="Edit Tag"
+                      icon={<ChakraIcon icon={Icons.FiEdit} />}
+                      colorScheme="blue"
+                      size="sm"
+                      onClick={() => openEditModal(tag)}
+                    />
+                    <IconButton
+                      aria-label="Delete Tag"
+                      icon={<ChakraIcon icon={Icons.FiTrash2} />}
+                      colorScheme="red"
+                      size="sm"
+                      onClick={() => handleDelete(tag.id)}
+                    />
+                  </HStack>
                 </HStack>
               ))}
             </VStack>
@@ -259,6 +334,94 @@ const TagManagement: React.FC = () => {
           )}
         </Box>
       </GridItem>
+
+      {/* Edit Tag Modal */}
+      <Modal isOpen={isEditModalOpen} onClose={closeEditModal}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Edit Tag</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            {selectedTag && (
+              <VStack spacing={4} align="stretch">
+                <FormControl isRequired isInvalid={!selectedTag.name && isSubmitting}>
+                  <FormLabel>Tag Name</FormLabel>
+                  <Input 
+                    placeholder="Enter tag name"
+                    value={selectedTag.name}
+                    onChange={(e) => setSelectedTag({...selectedTag, name: e.target.value})}
+                  />
+                  {!selectedTag.name && isSubmitting && (
+                    <FormErrorMessage>Tag name is required</FormErrorMessage>
+                  )}
+                </FormControl>
+                
+                <FormControl>
+                  <FormLabel>Color</FormLabel>
+                  <HStack spacing={4}>
+                    <Select
+                      value={selectedTag.color}
+                      onChange={(e) => setSelectedTag({...selectedTag, color: e.target.value})}
+                      width="full"
+                    >
+                      {colorOptions.map(option => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </Select>
+                    <Box 
+                      width="40px" 
+                      height="40px" 
+                      borderRadius="md" 
+                      bg={selectedTag.color} 
+                      border="1px solid" 
+                      borderColor="gray.200"
+                    />
+                  </HStack>
+                  {!selectedTag.color && isSubmitting && (
+                    <FormErrorMessage>Tag color is required</FormErrorMessage>
+                  )}
+                </FormControl>
+                
+                <FormControl>
+                  <FormLabel>Icon</FormLabel>
+                  <Select
+                    value={selectedTag.icon || ''}
+                    onChange={(e) => setSelectedTag({...selectedTag, icon: e.target.value})}
+                  >
+                    {emojiOptions.map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.value} {option.label}
+                      </option>
+                    ))}
+                  </Select>
+                  <Flex mt={2} justify="center">
+                    <Box p={2} borderWidth="1px" borderRadius="md" fontSize="24px">
+                      {selectedTag.icon}
+                    </Box>
+                  </Flex>
+                </FormControl>
+              </VStack>
+            )}
+          </ModalBody>
+
+          <ModalFooter>
+            <Button variant="ghost" mr={3} onClick={closeEditModal}>
+              Cancel
+            </Button>
+            <Button 
+              colorScheme="blue" 
+              onClick={handleUpdate}
+              isLoading={isSubmitting}
+              loadingText="Updating"
+              isDisabled={!selectedTag}
+            >
+              Save Changes
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Grid>
   );
 };

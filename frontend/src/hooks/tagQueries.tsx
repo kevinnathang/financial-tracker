@@ -2,7 +2,8 @@
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import tagService, {
   TagListResponse,
-  TagPayload
+  TagPayload,
+  UpdateTagPayload
 } from '../services/tagService';
 
 export const TAG_KEYS = {
@@ -53,6 +54,25 @@ export const useDeleteTag = () => {
       },
       onError: (error, tagId) => {
         console.error(`QUERY - Error deleting tag with ID: ${tagId}`);
+      },
+    }
+  );
+};
+
+export const useUpdateTag = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation<any, Error, UpdateTagPayload>(
+    async ({ tagId, ...tagData }) => {
+      const response = await tagService.updateTag(tagId, tagData);
+      return response;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries(TAG_KEYS.lists());
+      },
+      onError: (error, { tagId }) => {
+        console.error(`QUERY - Error Updating transaction with ID: ${tagId}`);
       },
     }
   );

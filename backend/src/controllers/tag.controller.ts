@@ -107,4 +107,45 @@ export class TagController {
             return res.status(500).json({ message: 'Error deleting tag', error });
         }
     }
+
+    static async updateTag(req: Request, res: Response) {
+        try {
+            const userId = req.user?.userId
+            const { tagId } = req.params;
+            const { name, color, icon } = req.body;
+
+            const tag = await prisma.tag.findUnique({
+                where: { id: tagId },
+            });
+
+            if (!userId) {
+                return res.status(401).json({ message: 'Unauthorized' });
+            }
+
+            if (!tag) {
+                return res.status(404).json({ message: 'Tag not found' });
+            }
+
+            if (tag.user_id !== userId) {
+                return res.status(403).json({ message: 'Not authorized to delete this tag' });
+            }
+
+            const updatedTag = await prisma.tag.update({
+                where: { id: tagId },
+                data: {
+                    name,
+                    color,
+                    icon
+                }
+            });
+
+            return res.status(200).json({
+                message: 'Tag updated successfully',
+                tag: updatedTag
+            });
+        } catch (error) {
+            console.error('Update tag error:', error);
+            return res.status(500).json({ message: 'Error updating tag', error });
+        }
+    }
 }

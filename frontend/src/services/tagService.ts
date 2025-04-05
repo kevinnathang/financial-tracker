@@ -24,6 +24,10 @@ export interface CreateTagResponse {
   tag: Tag;
 }
 
+export interface UpdateTagPayload extends TagPayload {
+  tagId: string;
+}
+
 export const tagService = {
   createTag: async (tag: TagPayload): Promise<CreateTagResponse> => {
     try {
@@ -52,6 +56,16 @@ export const tagService = {
     } catch (error) {
       console.error('SERVICE - Error in deleteTag:', error);
       throw error; 
+    }
+  },
+
+  updateTag: async(tagId: string, tagData: TagPayload): Promise<any> => {
+    try {
+      const response = await api.patch(`/tag/${tagId}`, tagData);
+      return response.data
+    } catch (error) {
+      console.error('SERVICE - Error in updateTag:', error);
+      throw error;
     }
   }
 };
