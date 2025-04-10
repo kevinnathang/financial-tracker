@@ -53,8 +53,11 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, change, icon, accentC
 };
 
 const AccountSummary: React.FC = () => {
-  const { data: user } = useUserData();
-  const { data: monthlyStats, isLoading, isError } = useMonthlyStats();
+const storedUser = localStorage.getItem('user')
+const currentUserId = storedUser ? JSON.parse(storedUser).id : null;
+
+const { data: user  } = useUserData(currentUserId);
+const { data: monthlyStats, isLoading, isError } = useMonthlyStats();
   
   if (isLoading) {
     return (
@@ -83,7 +86,7 @@ const AccountSummary: React.FC = () => {
   const statData = [
     {
       title: 'Total Balance',
-      value: formatCurrency(monthlyStats.currentMonth.balance),
+      value: formatCurrency(Number(user.balance)),
       change: monthlyStats.percentageChanges.balance,
       icon: FiDollarSign,
       accentColor: 'blue.500'

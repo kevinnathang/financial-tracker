@@ -6,13 +6,16 @@ import RecentTransactions from '../components/dashboard/widgets/RecentTransactio
 import { useUserData } from '../hooks/userQueries';
 
 const Dashboard: React.FC = () => {
-  const { data: user, isLoading } = useUserData();
+  const storedUser = localStorage.getItem('user');
+  const currentUserId = storedUser ? JSON.parse(storedUser).id : null;
+  
+  const { data: user, isLoading: userLoading } = useUserData(currentUserId);
   
   return (
     <DashboardLayout>
       <Box mb={6}>
         <Heading size="lg">
-          {isLoading ? 'Welcome!' : user ? `Welcome back, ${user.full_name}!` : 'Welcome!'}
+          {userLoading ? 'Welcome!' : user ? `Welcome back, ${user.full_name}!` : 'Welcome!'}
         </Heading>
       </Box>
       {/* Dashboard Widgets Grid */}

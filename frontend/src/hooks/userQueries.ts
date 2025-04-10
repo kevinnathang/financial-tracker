@@ -12,18 +12,18 @@ export interface User {
 
 export const USER_QUERY_KEY = 'userData';
 
-export const useUserData = () => {
+export const useUserData = (id: string) => {
   return useQuery<User | null>(
-    USER_QUERY_KEY,
+    [USER_QUERY_KEY, id],
     async () => {
-      const userData = localStorage.getItem('user');
-      if (userData) {
-        return JSON.parse(userData);
-      }
-      return null;
+      if (!id) return null
+      const response = await userService.getUser(id);
+      console.log("userQuery", response.user)
+      return response.user ?? null
     },
     {
       refetchOnMount: false,
+      enabled: !!id
     }
   );
 };

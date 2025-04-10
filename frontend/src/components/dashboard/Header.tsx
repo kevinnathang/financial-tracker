@@ -15,7 +15,11 @@ const Header: React.FC = () => {
   const location = useLocation();
   const currentTitle = pageTitles[location.pathname] || 'Finance Tracker';
   
-  const { data: user } = useUserData();
+  const storedUser = localStorage.getItem('user');
+  const currentUserId = storedUser ? JSON.parse(storedUser).id : null;
+  
+  const { data: user } = useUserData(currentUserId);
+
   const logout = useLogout();
   const history = useHistory();
   

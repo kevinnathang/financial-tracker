@@ -11,6 +11,17 @@ const userService = {
             throw error;
         }
     },
+
+    getUser: async(id: string) => {
+        try {
+            const response = await api.get(`/user/${id}`)
+            console.log("userService", response.data)
+            return response.data
+        } catch (error) {
+            console.error('SERVICE - Error in getUser');
+            throw error;
+        }
+    }
 }
 
 export default userService;

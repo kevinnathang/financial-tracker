@@ -11,9 +11,12 @@ import Dashboard from '../pages/Dashboard';
 import Tags from '../pages/Tags'
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-  const { data: user, isLoading } = useUserData();
-  
-  if (isLoading) {
+  const storedUser = localStorage.getItem('user')
+  const currentUserId = storedUser ? JSON.parse(storedUser).id : null;
+
+  const { data: user, isLoading: userLoading } = useUserData(currentUserId);
+
+  if (userLoading) {
     return <div>Loading...</div>;
   }
   
