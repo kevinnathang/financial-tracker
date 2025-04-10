@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, VStack, Heading, Flex, Text } from '@chakra-ui/react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { FiHome, FiDollarSign, FiPieChart, FiSettings, FiLogOut, FiTag } from 'react-icons/fi';
+import { FiHome, FiPieChart, FiSettings, FiLogOut, FiTag } from 'react-icons/fi';
 import { ChakraIcon } from '../ui/ChakraIcon';
 import { IconType } from 'react-icons';
 import { useLogout } from '../../hooks/userQueries';

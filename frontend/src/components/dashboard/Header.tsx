@@ -1,11 +1,20 @@
 import React from 'react';
 import { Flex, Box, Text, Avatar, Menu, MenuButton, MenuList, MenuItem, MenuDivider } from '@chakra-ui/react';
 import { FiBell, FiChevronDown } from 'react-icons/fi';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import { ChakraIcon } from '../ui/ChakraIcon';
 import { useUserData, useLogout } from '../../hooks/userQueries';
 
 const Header: React.FC = () => {
+  const pageTitles: Record<string, string> = {
+    '/dashboard': 'Dashboard',
+    '/tags': 'Tags',
+    '/budget': 'Budget',
+    '/settings': 'Settings',
+  };
+  const location = useLocation();
+  const currentTitle = pageTitles[location.pathname] || 'Finance Tracker';
+  
   const { data: user } = useUserData();
   const logout = useLogout();
   const history = useHistory();
@@ -25,7 +34,7 @@ const Header: React.FC = () => {
     >
       <Box>
         <Text fontSize="xl" fontWeight="bold">
-          Dashboard
+          {currentTitle}
         </Text>
       </Box>
       <Flex alignItems="center">
