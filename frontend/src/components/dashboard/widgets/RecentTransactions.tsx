@@ -100,6 +100,15 @@ const RecentTransactions: React.FC = () => {
                       <Text fontSize="lg">{transaction.tag.icon}</Text>
                     )}
                       <Text fontWeight="medium">{transaction.tag?.name}</Text>
+                      {transaction.tag?.color && (
+                        <Box 
+                          width="200px" 
+                          height="4px" 
+                          backgroundColor={transaction.tag.color}
+                          alignSelf="center"
+                          borderRadius="sm"
+                        />
+                      )}
                     </Flex>
                   </Td>
                   <Td>

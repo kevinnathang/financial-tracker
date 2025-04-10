@@ -15,7 +15,6 @@ import {
   Flex,
   Grid,
   GridItem,
-  Badge,
   IconButton,
   Modal,
   ModalOverlay,
@@ -24,11 +23,156 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
+  Slider,
+  SliderTrack,
+  SliderFilledTrack,
+  SliderThumb,
 } from '@chakra-ui/react';
 import * as Icons from 'react-icons/fi';
 import { useCreateTag, useTags, useDeleteTag, useUpdateTag } from '../../../hooks/tagQueries';
 import { ChakraIcon } from '../../ui/ChakraIcon';
 import { Tag } from '../../../services/tagService';
+interface HSV {
+  h: number;
+  s: number;
+  v: number;
+}
+
+const hsvToHex = (h: number, s: number, v: number): string => {
+  let r: number, g: number, b: number;
+  const i = Math.floor(h * 6);
+  const f = h * 6 - i;
+  const p = v * (1 - s);
+  const q = v * (1 - f * s);
+  const t = v * (1 - (1 - f) * s);
+
+  switch (i % 6) {
+    case 0: r = v; g = t; b = p; break;
+    case 1: r = q; g = v; b = p; break;
+    case 2: r = p; g = v; b = t; break;
+    case 3: r = p; g = q; b = v; break;
+    case 4: r = t; g = p; b = v; break;
+    case 5: r = v; g = p; b = q; break;
+    default: r = 0; g = 0; b = 0;
+  }
+
+  const toHex = (x: number): string => {
+    const hex = Math.round(x * 255).toString(16);
+    return hex.length === 1 ? '0' + hex : hex;
+  };
+
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+};
+
+const ColorPicker = ({ value, onChange }: {value: string, onChange: (color: string) => void}) => {
+  const [hsv, setHsv] = useState<HSV>({ h: 0.6, s: 0.7, v: 0.8 });
+
+  const updateColor = (newHsv: HSV): void => {
+    const updatedHsv = {
+      h: Math.max(0, Math.min(1, newHsv.h)),
+      s: Math.max(0, Math.min(1, newHsv.s)),
+      v: Math.max(0, Math.min(1, newHsv.v))
+    };
+    
+    const hexColor = hsvToHex(updatedHsv.h, updatedHsv.s, updatedHsv.v);
+    setHsv(updatedHsv);
+    onChange(hexColor);
+  };
+
+  const handleHueChange = (val: number): void => {
+    updateColor({ ...hsv, h: val / 360 });
+  };
+
+  const handleSaturationChange = (val: number): void => {
+    updateColor({ ...hsv, s: val / 100 });
+  };
+
+  const handleValueChange = (val: number): void => {
+    updateColor({ ...hsv, v: val / 100 });
+  };
+
+  const currentColor = hsvToHex(hsv.h, hsv.s, hsv.v);
+
+  return (
+    <VStack spacing={4} width="100%">
+      <Box 
+        width="100%" 
+        height="60px" 
+        borderRadius="md" 
+        bg={currentColor}
+        border="1px solid" 
+        borderColor="gray.200"
+      />
+
+      <FormControl>
+        <FormLabel>Hue</FormLabel>
+        <Box position="relative">
+          <Slider 
+            value={hsv.h * 360} 
+            onChange={handleHueChange} 
+            min={0} 
+            max={360}
+          >
+            <SliderTrack 
+              bgGradient="linear(to-r, #F00, #FF0, #0F0, #0FF, #00F, #F0F, #F00)"
+              height="12px"
+              borderRadius="md"
+            >
+              <SliderFilledTrack bg="transparent" />
+            </SliderTrack>
+            <SliderThumb boxSize={6} />
+          </Slider>
+        </Box>
+      </FormControl>
+
+      <FormControl>
+        <FormLabel>Saturation</FormLabel>
+        <Box position="relative">
+          <Slider 
+            value={hsv.s * 100} 
+            onChange={handleSaturationChange} 
+            min={0} 
+            max={100}
+          >
+            <SliderTrack 
+              bgGradient={`linear(to-r, ${hsvToHex(hsv.h, 0, hsv.v)}, ${hsvToHex(hsv.h, 1, hsv.v)})`}
+              height="12px"
+              borderRadius="md"
+            >
+              <SliderFilledTrack bg="transparent" />
+            </SliderTrack>
+            <SliderThumb boxSize={6} />
+          </Slider>
+        </Box>
+      </FormControl>
+
+      <FormControl>
+        <FormLabel>Brightness</FormLabel>
+        <Box position="relative">
+          <Slider 
+            value={hsv.v * 100} 
+            onChange={handleValueChange} 
+            min={0} 
+            max={100}
+          >
+            <SliderTrack 
+              bgGradient={`linear(to-r, #000, ${hsvToHex(hsv.h, hsv.s, 1)})`}
+              height="12px"
+              borderRadius="md"
+            >
+              <SliderFilledTrack bg="transparent" />
+            </SliderTrack>
+            <SliderThumb boxSize={6} />
+          </Slider>
+        </Box>
+      </FormControl>
+
+      <Text fontSize="sm" alignSelf="flex-end">
+        {currentColor.toUpperCase()}
+      </Text>
+    </VStack>
+  );
+};
 
 const TagManagement: React.FC = () => {
   const { data, isLoading, isError } = useTags();
@@ -174,7 +318,6 @@ const TagManagement: React.FC = () => {
     setIcon('💵');
   };
   
-  // Emoji options instead of React icons
   const emojiOptions = [
     { value: '💵', label: 'Cash' },
     { value: '📈', label: 'Increase' },
@@ -190,15 +333,6 @@ const TagManagement: React.FC = () => {
     { value: '🎮', label: 'Entertainment' },
     { value: '👜', label: 'Shopping' },
     { value: '✈️', label: 'Travel' }
-  ];
-  
-  const colorOptions = [
-    { value: '#3182CE', label: 'Blue' },
-    { value: '#38A169', label: 'Green' },
-    { value: '#E53E3E', label: 'Red' },
-    { value: '#805AD5', label: 'Purple' },
-    { value: '#DD6B20', label: 'Orange' },
-    { value: '#718096', label: 'Gray' }
   ];
   
   return (
@@ -223,30 +357,7 @@ const TagManagement: React.FC = () => {
               
               <FormControl>
                 <FormLabel>Color</FormLabel>
-                <HStack spacing={4}>
-                  <Select
-                    value={color}
-                    onChange={(e) => setColor(e.target.value)}
-                    width="full"
-                  >
-                    {colorOptions.map(option => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </Select>
-                  <Box 
-                    width="40px" 
-                    height="40px" 
-                    borderRadius="md" 
-                    bg={color} 
-                    border="1px solid" 
-                    borderColor="gray.200"
-                  />
-                </HStack>
-                {!color && isSubmitting && (
-                  <FormErrorMessage>Tag color is required</FormErrorMessage>
-                )}
+                <ColorPicker value={color} onChange={setColor} />
               </FormControl>
               
               <FormControl>
@@ -301,9 +412,12 @@ const TagManagement: React.FC = () => {
                   <HStack spacing={3}>
                     <Box fontSize="24px">{tag.icon}</Box>
                     <Text fontWeight="medium">{tag.name}</Text>
-                    <Badge px={2} py={1} borderRadius="md" colorScheme={getColorScheme(tag.color)}>
-                      {getColorName(tag.color)}
-                    </Badge>
+                    <Box 
+                      width="12px" 
+                      height="12px" 
+                      borderRadius="full" 
+                      bg={tag.color}
+                    />
                   </HStack>
                   <HStack>
                     <IconButton
@@ -335,7 +449,6 @@ const TagManagement: React.FC = () => {
         </Box>
       </GridItem>
 
-      {/* Edit Tag Modal */}
       <Modal isOpen={isEditModalOpen} onClose={closeEditModal}>
         <ModalOverlay />
         <ModalContent>
@@ -358,30 +471,10 @@ const TagManagement: React.FC = () => {
                 
                 <FormControl>
                   <FormLabel>Color</FormLabel>
-                  <HStack spacing={4}>
-                    <Select
-                      value={selectedTag.color}
-                      onChange={(e) => setSelectedTag({...selectedTag, color: e.target.value})}
-                      width="full"
-                    >
-                      {colorOptions.map(option => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </Select>
-                    <Box 
-                      width="40px" 
-                      height="40px" 
-                      borderRadius="md" 
-                      bg={selectedTag.color} 
-                      border="1px solid" 
-                      borderColor="gray.200"
-                    />
-                  </HStack>
-                  {!selectedTag.color && isSubmitting && (
-                    <FormErrorMessage>Tag color is required</FormErrorMessage>
-                  )}
+                  <ColorPicker 
+                    value={selectedTag.color} 
+                    onChange={(color: any) => setSelectedTag({...selectedTag, color})} 
+                  />
                 </FormControl>
                 
                 <FormControl>
@@ -424,32 +517,6 @@ const TagManagement: React.FC = () => {
       </Modal>
     </Grid>
   );
-};
-
-const getColorScheme = (colorHex: string): string => {
-  const colorMap: Record<string, string> = {
-    '#3182CE': 'blue',
-    '#38A169': 'green',
-    '#E53E3E': 'red',
-    '#805AD5': 'purple',
-    '#DD6B20': 'orange',
-    '#718096': 'gray',
-  };
-  
-  return colorMap[colorHex] || 'gray';
-};
-
-const getColorName = (colorHex: string): string => {
-  const colorMap: Record<string, string> = {
-    '#3182CE': 'Blue',
-    '#38A169': 'Green',
-    '#E53E3E': 'Red',
-    '#805AD5': 'Purple',
-    '#DD6B20': 'Orange',
-    '#718096': 'Gray',
-  };
-  
-  return colorMap[colorHex] || 'Custom';
 };
 
 export default TagManagement;
