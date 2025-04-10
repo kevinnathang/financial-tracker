@@ -76,11 +76,9 @@ export class TagController {
     }
 
     static async deleteTag(req: Request, res: Response) {
-        console.log("calling delete contrller")
         try {
             const userId = req.user?.userId
             const { tagId } = req.params;
-            console.log(userId, tagId)
 
             if (!userId) {
                 return res.status(401).json({ message: 'Unauthorized' });

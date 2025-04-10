@@ -205,7 +205,6 @@ const TagManagement: React.FC = () => {
   }
 
   const handleDelete = (tagId: string) => {
-    console.log(tagId);
     deleteTag(tagId);
   };
 

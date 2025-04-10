@@ -155,8 +155,7 @@ export class TransactionController {
             return res.status(200).json({
                 currentMonth: {
                     income: currentMonthIncome,
-                    expenses: currentMonthExpenses,
-                    balance: currentMonthBalance
+                    expenses: currentMonthExpenses
                 },
                 previousMonth: {
                     income: previousMonthIncome,
@@ -176,11 +175,9 @@ export class TransactionController {
     }
 
     static async deleteTransaction(req: Request, res: Response) {
-        console.log("called method in controller")
         try {
             const userId = req.user?.userId;
             const { transactionId } = req.params;
-            console.log(transactionId, userId)
 
             if (!userId) {
                 return res.status(401).json({ message: 'Unauthorized' });
@@ -223,18 +220,14 @@ export class TransactionController {
     }
 
     static async updateTransaction(req: Request, res: Response) {
-        console.log("calling update transaction controller")
         try {
             const userId = req.user?.userId;
             const { transactionId } = req.params;
             const { tag_id, financial_geopoint_id, amount, type, description, date } = req.body;
-            console.log(tag_id, financial_geopoint_id, amount, type, description, date)
-            console.log(userId, transactionId)
 
             if (!userId) {
                 return res.status(401).json({ message: 'Unauthorized' });
             }
-            console.log("ok 1")
 
             if (!amount || !type) {
                 return res.status(400).json({
@@ -242,8 +235,6 @@ export class TransactionController {
                     required: ['amount', 'type']
                 });
             }
-
-            console.log("ok 2")
 
             const existingTransaction = await prisma.transaction.findUnique({
                 where: { id: transactionId },
@@ -275,8 +266,6 @@ export class TransactionController {
             } else {
                 balanceAdjustment = balanceAdjustment.minus(newAmount);
             }
-
-            console.log("here ok")
 
             const result = await prisma.$transaction(async (prismaClient) => {
                 const updatedTransaction = await prismaClient.transaction.update({

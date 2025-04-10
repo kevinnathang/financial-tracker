@@ -43,9 +43,7 @@ export const useDeleteTag = () => {
 
   return useMutation<void, Error, string>(
     async (tagId) => {
-      console.log(`QUERY - Attempting to delete tag with ID: ${tagId}`);
       const response = await tagService.deleteTag(tagId);
-      console.log(`QUERY - Tag ${tagId} deleted successfully`);
       return response;
     },
     {

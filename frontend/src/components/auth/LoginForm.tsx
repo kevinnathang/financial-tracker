@@ -22,18 +22,14 @@ const LoginForm = () => {
 
     const handleFormSubmit = async (values: any, { setSubmitting }: any) => {
         try {
-            console.log("Attempting login...");
             await loginMutation.mutateAsync({ 
                 email: values.email, 
                 password: values.password 
             });
-            console.log("Login successful, showing toast");
  
             history.push('/dashboard');
         } catch (error) {
             console.error("Login failed:", error);
-            let errorMessage = "Invalid email or password";
-            return console.log(errorMessage)
         } finally {
             setSubmitting(false);
         }

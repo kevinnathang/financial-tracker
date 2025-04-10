@@ -18,7 +18,6 @@ export const useUserData = (id: string) => {
     async () => {
       if (!id) return null
       const response = await userService.getUser(id);
-      console.log("userQuery", response.user)
       return response.user ?? null
     },
     {

@@ -15,17 +15,11 @@ export const TRANSACTION_KEYS = {
 };
 
 export const useTransactions = () => {
-  const queryClient = useQueryClient();
 
   return useQuery<TransactionListResponse, Error>(
     TRANSACTION_KEYS.lists(),
     transactionService.getTransactions,
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries(TRANSACTION_KEYS.lists());
-        
-        queryClient.invalidateQueries(TRANSACTION_KEYS.stats());
-      },
       onError: (error) => {
         console.error(`QUERY - Error using useTransactions. ${error}`);
       },
@@ -34,17 +28,11 @@ export const useTransactions = () => {
 };
 
 export const useMonthlyStats = () => {
-  const queryClient = useQueryClient();
 
   return useQuery<MonthlyStats, Error>(
     TRANSACTION_KEYS.stats(),
     transactionService.getMonthlyStats,
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries(TRANSACTION_KEYS.lists());
-        
-        queryClient.invalidateQueries(TRANSACTION_KEYS.stats());
-      },
       onError: (error) => {
         console.error(`QUERY - Error getting monthly status. ${error}`);
       },
@@ -62,6 +50,8 @@ export const useCreateTransaction = () => {
         queryClient.invalidateQueries(TRANSACTION_KEYS.lists());
         
         queryClient.invalidateQueries(TRANSACTION_KEYS.stats());
+
+        queryClient.invalidateQueries('userData');
       },
       onError: (error) => {
         console.error(`QUERY - Error creating transaction. ${error}`);
@@ -82,6 +72,7 @@ export const useDeleteTransaction = () => {
       onSuccess: () => {
         queryClient.invalidateQueries(TRANSACTION_KEYS.lists());
         queryClient.invalidateQueries(TRANSACTION_KEYS.stats());
+        queryClient.invalidateQueries('userData');
       },
       onError: (error, transactionId) => {
         console.error(`QUERY - Error deleting transaction with ID: ${transactionId}`);
@@ -102,6 +93,7 @@ export const useUpdateTransaction = () => {
       onSuccess: () => {
         queryClient.invalidateQueries(TRANSACTION_KEYS.lists());
         queryClient.invalidateQueries(TRANSACTION_KEYS.stats());
+        queryClient.invalidateQueries('userData');
       },
       onError: (error, { transactionId }) => {
         console.error(`QUERY - Error Updating transaction with ID: ${transactionId}`);

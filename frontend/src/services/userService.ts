@@ -15,7 +15,6 @@ const userService = {
     getUser: async(id: string) => {
         try {
             const response = await api.get(`/user/${id}`)
-            console.log("userService", response.data)
             return response.data
         } catch (error) {
             console.error('SERVICE - Error in getUser');

@@ -30,7 +30,6 @@ const RecentTransactions: React.FC = () => {
   };
 
   const handleDelete = (transactionId: string) => {
-    console.log(transactionId)
     deleteTransaction(transactionId);
   };
 
