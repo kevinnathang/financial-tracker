@@ -70,7 +70,7 @@ const RecentTransactions: React.FC = () => {
             variant="ghost"
             size="sm"
             rightIcon={<ChakraIcon icon={Icons.FiArrowRight} />}
-            onClick={() => history.push('/dashboard/transactions')}
+            onClick={() => history.push('/transactions')}
           >
             View All
           </Button>

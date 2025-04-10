@@ -42,7 +42,7 @@ const AppRoutes = () => {
         )}
       />
       <Route
-        path="/dashboard/tags"
+        path="/tags"
         exact
         render={() => (
           <ProtectedRoute>

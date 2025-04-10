@@ -31,7 +31,7 @@ export interface UpdateTagPayload extends TagPayload {
 export const tagService = {
   createTag: async (tag: TagPayload): Promise<CreateTagResponse> => {
     try {
-      const response = await api.post('/tag', tag);
+      const response = await api.post('/tags', tag);
       return response.data;
     } catch (error) {
       console.error('SERVICE - Error in createTag:', error);
@@ -41,7 +41,7 @@ export const tagService = {
   
   getTags: async (): Promise<TagListResponse> => {
     try {
-      const response = await api.get('/tag');
+      const response = await api.get('/tags');
       return response.data;
     } catch (error) {
       console.error('SERVICE - Error in getTags:', error);
@@ -51,7 +51,7 @@ export const tagService = {
 
   deleteTag: async(tagId: string) => {
     try {
-      const response = await api.delete(`/tag/${tagId}`);
+      const response = await api.delete(`/tags/${tagId}`);
       return response.data
     } catch (error) {
       console.error('SERVICE - Error in deleteTag:', error);
@@ -61,7 +61,7 @@ export const tagService = {
 
   updateTag: async(tagId: string, tagData: TagPayload): Promise<any> => {
     try {
-      const response = await api.patch(`/tag/${tagId}`, tagData);
+      const response = await api.patch(`/tags/${tagId}`, tagData);
       return response.data
     } catch (error) {
       console.error('SERVICE - Error in updateTag:', error);

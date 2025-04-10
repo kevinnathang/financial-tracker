@@ -10,6 +10,6 @@ const router = Router();
 router.use('/user', userRoutes);
 router.use('/transactions', transactionRoutes);
 router.use('/auth', authRoutes)
-router.use('/tag', tagRoutes)
+router.use('/tags', tagRoutes)
 
 export default router;

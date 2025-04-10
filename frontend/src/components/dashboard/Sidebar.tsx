@@ -61,20 +61,20 @@ const Sidebar: React.FC = () => {
         <NavItem
           icon={FiTag}
           label="Tags"
-          path="/dashboard/tags"
-          active={location.pathname === '/dashboard/tags'}
+          path="/tags"
+          active={location.pathname === '/tags'}
         />
         <NavItem
           icon={FiPieChart}
           label="Budget"
-          path="/dashboard/budget"
-          active={location.pathname === '/dashboard/budget'}
+          path="/budget"
+          active={location.pathname === '/budget'}
         />
         <NavItem
           icon={FiSettings}
           label="Settings"
-          path="/dashboard/settings"
-          active={location.pathname === '/dashboard/settings'}
+          path="/settings"
+          active={location.pathname === '/settings'}
         />
       </VStack>
       <Box position="absolute" bottom={5} width="100%" px={3}>
