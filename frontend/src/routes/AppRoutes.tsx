@@ -9,6 +9,7 @@ import ResetPassword from '../pages/ResetPassword';
 
 import Dashboard from '../pages/Dashboard';
 import Tags from '../pages/Tags'
+import Budget from '../pages/Budget'
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const storedUser = localStorage.getItem('user')
@@ -50,6 +51,16 @@ const AppRoutes = () => {
         render={() => (
           <ProtectedRoute>
             <Tags />
+          </ProtectedRoute>
+        )}
+      />
+
+      <Route
+        path="/budget"
+        exact
+        render={() => (
+          <ProtectedRoute>
+            <Budget />
           </ProtectedRoute>
         )}
       />
