@@ -30,6 +30,8 @@ export const useCreateTag = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(TAG_KEYS.lists());
+        queryClient.invalidateQueries(TAG_KEYS.all);
+
       },
       onError: (error) => {
         console.error(`QUERY - Error using useCreateTag. ${error}`);
@@ -49,6 +51,10 @@ export const useDeleteTag = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(TAG_KEYS.lists());
+        queryClient.invalidateQueries(TAG_KEYS.all);
+        queryClient.invalidateQueries('userData');
+        queryClient.invalidateQueries('transactions')
+
       },
       onError: (error, tagId) => {
         console.error(`QUERY - Error deleting tag with ID: ${tagId}`);
@@ -68,6 +74,9 @@ export const useUpdateTag = () => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(TAG_KEYS.lists());
+        queryClient.invalidateQueries(TAG_KEYS.all);
+        queryClient.invalidateQueries('userData');
+        queryClient.invalidateQueries('transactions')
       },
       onError: (error, { tagId }) => {
         console.error(`QUERY - Error Updating transaction with ID: ${tagId}`);
