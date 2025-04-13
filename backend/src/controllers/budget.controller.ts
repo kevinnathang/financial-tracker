@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import prisma from "../lib/prisma";
 import { Prisma } from "@prisma/client";
+import { connect } from "http2";
 
 export class BudgetController {
     static async createBudget(req: Request, res: Response) {
@@ -30,14 +31,16 @@ export class BudgetController {
 
             const newBudget = await prisma.budget.create({
                 data: {
-                    user_id: userId,
                     name,
                     amount: numericAmount,
                     period,
                     start_date: new Date(start_date),
                     end_date: end_date ? new Date(end_date) : null,
                     is_main: is_main || false,
-                    description
+                    description,
+                    user: {
+                        connect: { id: userId }
+                    }
                 },
             });
 
@@ -50,6 +53,41 @@ export class BudgetController {
         } catch (error) {
             console.error('Create budget error:', error);
             return res.status(500).json({ message: 'Error creating budget' });
+        }
+    }
+
+    static async getBudget(req: Request, res: Response) {
+        try {
+            const userId = req.user?.userId
+
+            if (!userId) {
+                return res.json(401).json({ message: "Unauthorized" })
+            }
+
+            const { budgetId } = req.params
+
+            if (!budgetId) {
+                return res.status(400).json({ message: 'Budget ID is required' });
+            }
+
+            const budget = await prisma.budget.findUnique({
+                where: {
+                    id: budgetId
+                }
+            })
+
+            if (!budget) {
+                return res.status(404).json({ message: "Budget not found" })
+            }
+
+            if (budget.user_id !== userId) {
+                return res.status(403).json({ message: "User not authorized" })
+            }
+
+            return res.status(200).json({ budget })
+        } catch (error) {
+            console.error("Error getting single budget:", error)
+            return res.status(500).json({ message: 'Error retrieving budget' });
         }
     }
 
