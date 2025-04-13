@@ -209,16 +209,13 @@ export class BudgetController {
                 where: { id: budgetId },
                 data: updateData,
                 select: {
-                    id: true,
                     name: true,
                     amount: true,
                     period: true,
                     start_date: true,
                     end_date: true,
                     is_main: true,
-                    description: true,
-                    created_at: true,
-                    updated_at: true
+                    description: true
                 }
             });
 

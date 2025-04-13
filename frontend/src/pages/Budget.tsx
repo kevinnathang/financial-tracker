@@ -1,6 +1,7 @@
 import React from 'react';
 import { Grid, GridItem } from '@chakra-ui/react';
 import DashboardLayout from '../components/layout/DashboardLayout';
+import BudgetManagement from '../components/dashboard/BudgetManagement';
 
 const Budget: React.FC = () => {
   
@@ -11,10 +12,11 @@ const Budget: React.FC = () => {
         gap={6}
       >
         <GridItem colSpan={{ base: 1, md: 2, lg: 4 }}>
+          <BudgetManagement />
         </GridItem>
       </Grid>
     </DashboardLayout>
   );
 };
 
-export default Budget
+export default Budget;
