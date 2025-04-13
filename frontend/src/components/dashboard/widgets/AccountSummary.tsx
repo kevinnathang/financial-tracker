@@ -6,6 +6,7 @@ import { IconType } from 'react-icons';
 import { ChakraIcon } from '../../ui/ChakraIcon';
 import { useUserData } from '../../../hooks/userQueries';
 import { useMonthlyStats } from '../../../hooks/transactionQueries';
+import { useBudgets } from '../../../hooks/budgetQueries';
 
 interface StatCardProps {
   title: string;
@@ -58,6 +59,13 @@ const currentUserId = storedUser ? JSON.parse(storedUser).id : null;
 
 const { data: user  } = useUserData(currentUserId);
 const { data: monthlyStats, isLoading, isError } = useMonthlyStats();
+const { data } = useBudgets()
+const budgetsArray = data?.budgets || [];
+  
+// Find the main budget
+const mainBudget = budgetsArray.find(budget => budget.is_main === true);
+
+console.log('Main budget:', mainBudget);
   
   if (isLoading) {
     return (
@@ -107,8 +115,12 @@ const { data: monthlyStats, isLoading, isError } = useMonthlyStats();
     },
     {
       title: 'Budget Remaining',
-      value: formatCurrency(monthlyStats.currentMonth.balance),
-      change: monthlyStats.percentageChanges.balance,
+      value: mainBudget 
+        ? formatCurrency(Number(mainBudget.amount) - monthlyStats.currentMonth.expenses)
+        : 'No budget set',
+      change: mainBudget 
+        ? parseFloat(((Number(mainBudget.amount) - monthlyStats.currentMonth.expenses) / Number(mainBudget.amount) * 100 - 100).toFixed(1))
+        : undefined,
       icon: FiPieChart,
       accentColor: 'purple.500'
     }
