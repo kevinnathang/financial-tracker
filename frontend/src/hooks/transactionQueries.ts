@@ -18,7 +18,7 @@ export const useTransactions = () => {
 
   return useQuery<TransactionListResponse, Error>(
     TRANSACTION_KEYS.lists(),
-    transactionService.getTransactions,
+    transactionService.getAllTransactions,
     {
       onError: (error) => {
         console.error(`QUERY - Error using useTransactions. ${error}`);

@@ -53,7 +53,7 @@ export class TagController {
         }
     }
 
-    static async getTags(req: Request, res: Response) {
+    static async getAllTags(req: Request, res: Response) {
         try {
             const user_id = req.user?.userId
 

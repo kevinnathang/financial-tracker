@@ -91,7 +91,7 @@ export class BudgetController {
         }
     }
 
-    static async getBudgets(req: Request, res: Response) {
+    static async getAllBudgets(req: Request, res: Response) {
         try {
             const userId = req.user?.userId;
 

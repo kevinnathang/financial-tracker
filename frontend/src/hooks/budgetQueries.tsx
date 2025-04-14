@@ -14,7 +14,7 @@ export const BUDGET_KEYS = {
 export const useBudgets = () => {
   return useQuery<BudgetListResponse, Error>(
     BUDGET_KEYS.lists(),
-    budgetService.getBudgets,
+    budgetService.getAllBudgets,
     {
       staleTime: 5 * 60 * 1000, 
       retry: 2

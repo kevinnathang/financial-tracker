@@ -79,12 +79,12 @@ export const transactionService = {
     }
   },
   
-  getTransactions: async () => {
+  getAllTransactions: async () => {
     try {
       const response = await api.get('/transactions');
       return response.data;
     } catch (error) {
-      console.error('SERVICE - Error in getTransactions:', error);
+      console.error('SERVICE - Error in getAllTransactions:', error);
       throw error; 
     }
   },

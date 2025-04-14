@@ -68,7 +68,7 @@ export class TransactionController {
         }
     }
 
-    static async getTransactions(req: Request, res: Response) {
+    static async getAllTransactions(req: Request, res: Response) {
         try {
             const userId = req.user?.userId
             const transactions = await prisma.transaction.findMany({

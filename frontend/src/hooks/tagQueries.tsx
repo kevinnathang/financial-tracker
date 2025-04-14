@@ -14,7 +14,7 @@ export const TAG_KEYS = {
 export const useTags = () => {
   return useQuery<TagListResponse, Error>(
     TAG_KEYS.lists(),
-    tagService.getTags,
+    tagService.getAllTags,
     {
       staleTime: 5 * 60 * 1000, 
       retry: 2

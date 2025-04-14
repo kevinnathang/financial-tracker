@@ -57,12 +57,12 @@ export const budgetService = {
     }
   },
   
-  getBudgets: async (): Promise<BudgetListResponse> => {
+  getAllBudgets: async (): Promise<BudgetListResponse> => {
     try {
       const response = await api.get('/budget');
       return response.data;
     } catch (error) {
-      console.error('SERVICE - Error in getBudgets:', error);
+      console.error('SERVICE - Error in getAllBudgets:', error);
       throw error; 
     }
   },

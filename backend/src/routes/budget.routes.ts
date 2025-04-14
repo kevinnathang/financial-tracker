@@ -5,7 +5,7 @@ import { authMiddleware } from '../middleware/auth.middleware';
 const router = Router();
 
 router.post('/', authMiddleware, BudgetController.createBudget);
-router.get('/', authMiddleware, BudgetController.getBudgets);
+router.get('/', authMiddleware, BudgetController.getAllBudgets);
 router.get('/:budgetId', authMiddleware, BudgetController.getBudget);
 router.delete('/:budgetId', authMiddleware, BudgetController.deleteBudget)
 router.patch('/:budgetId', authMiddleware, BudgetController.updateBudget)

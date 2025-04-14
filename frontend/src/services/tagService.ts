@@ -39,12 +39,12 @@ export const tagService = {
     }
   },
   
-  getTags: async (): Promise<TagListResponse> => {
+  getAllTags: async (): Promise<TagListResponse> => {
     try {
       const response = await api.get('/tags');
       return response.data;
     } catch (error) {
-      console.error('SERVICE - Error in getTags:', error);
+      console.error('SERVICE - Error in getAllTags:', error);
       throw error; 
     }
   },
