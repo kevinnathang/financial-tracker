@@ -6,6 +6,7 @@ const router = Router();
 
 router.post('/', authMiddleware, TagController.createTag);
 router.get('/', authMiddleware, TagController.getAllTags)
+router.get('/:tagId', authMiddleware, TagController.getTag)
 router.delete('/:tagId', authMiddleware, TagController.deleteTag)
 router.patch('/:tagId', authMiddleware, TagController.updateTag)
 

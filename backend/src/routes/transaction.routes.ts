@@ -7,6 +7,7 @@ const router = Router();
 router.post('/', authMiddleware, TransactionController.createTransaction);
 router.get('/', authMiddleware, TransactionController.getAllTransactions);
 router.get('/monthly-stats', authMiddleware, TransactionController.getMonthlyStats);
+router.get('/:transactionId', authMiddleware, TransactionController.getTransaction)
 router.delete('/:transactionId', authMiddleware, TransactionController.deleteTransaction)
 router.patch('/:transactionId', authMiddleware, TransactionController.updateTransaction)
 

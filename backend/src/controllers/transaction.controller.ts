@@ -68,6 +68,41 @@ export class TransactionController {
         }
     }
 
+    static async getTransaction(req: Request, res: Response) {
+        try {
+            const userId = req.user?.userId
+
+            if (!userId) {
+                return res.status(401).json({ message: "Unauthorized" })
+            }
+
+            const { transactionId } = req.params
+
+            if (!transactionId) {
+                return res.status(400).json({ message: "Transaction ID is required" })
+            }
+
+            const transaction = await prisma.transaction.findUnique({
+                where: {
+                    id: transactionId
+                }
+            })
+
+            if (!transaction) {
+                return res.status(404).json({ message: "Transaction not found" })
+            }
+
+            if (transaction.user_id !== userId) {
+                return res.status(403).json({ message: "User not authorized" })
+            }
+
+            return res.status(200).json({ transaction })
+        } catch (error) {
+            console.error("Error getting single transaction:", error);
+            return res.status(500).json({ message: "Error retrieving transaction" })
+        }
+    }
+
     static async getAllTransactions(req: Request, res: Response) {
         try {
             const userId = req.user?.userId

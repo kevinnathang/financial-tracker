@@ -53,6 +53,41 @@ export class TagController {
         }
     }
 
+    static async getTag(req: Request, res: Response) {
+        try {
+            const userId = req.user?.userId
+
+            if (!userId) {
+                return res.status(401).json({ message: "Unauthorized" })
+            }
+
+            const { tagId } = req.params
+
+            if (!tagId) {
+                return res.status(400).json({ message: "Tag ID is required" })
+            }
+
+            const tag = await prisma.tag.findUnique({
+                where: {
+                    id: tagId
+                }
+            })
+
+            if (!tag) {
+                return res.status(404).json({ message: "Tag not found" })
+            }
+
+            if (tag.user_id !== userId) {
+                return res.status(403).json({ message: "User not authorized" })
+            }
+
+            return res.status(202).json({ tag })
+        } catch (error) {
+            console.error("Error getting single tag:", error)
+            return res.status(500).json({ message: "Error retrieving tag" })
+        }
+    }
+
     static async getAllTags(req: Request, res: Response) {
         try {
             const user_id = req.user?.userId
