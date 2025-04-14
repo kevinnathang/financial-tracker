@@ -10,6 +10,7 @@ import ResetPassword from '../pages/ResetPassword';
 import Dashboard from '../pages/Dashboard';
 import Tags from '../pages/Tags'
 import Budget from '../pages/Budget'
+import AccountSettings from '../pages/AccountSettings'
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const storedUser = localStorage.getItem('user')
@@ -61,6 +62,16 @@ const AppRoutes = () => {
         render={() => (
           <ProtectedRoute>
             <Budget />
+          </ProtectedRoute>
+        )}
+      />
+
+<Route
+        path="/account-settings"
+        exact
+        render={() => (
+          <ProtectedRoute>
+            <AccountSettings />
           </ProtectedRoute>
         )}
       />

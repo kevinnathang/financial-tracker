@@ -27,6 +27,10 @@ const Header: React.FC = () => {
     await logout.mutateAsync();
     history.push('/login');
   };
+
+  const handleAccountSettings = async () => {
+    history.push('/account-settings');
+  }
   
   return (
     <Flex
@@ -75,8 +79,7 @@ const Header: React.FC = () => {
             </Flex>
           </MenuButton>
           <MenuList>
-            <MenuItem>Profile</MenuItem>
-            <MenuItem>Account Settings</MenuItem>
+            <MenuItem onClick={handleAccountSettings}>Account Settings</MenuItem>
             <MenuDivider />
             <MenuItem onClick={handleLogout}>Logout</MenuItem>
           </MenuList>
