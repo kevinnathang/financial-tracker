@@ -1,14 +1,8 @@
-import { useQuery, useMutation } from 'react-query';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 import  authService  from '../services/authService';
 import  userService  from '../services/userService';
+import { User, UpdateUserPayload } from '../services/userService';
 import { queryClient } from '../lib/reactQuery';
-
-export interface User {
-  id: string;
-  email: string;
-  full_name: string;
-  balance: number;
-}
 
 export const USER_QUERY_KEY = 'userData';
 
@@ -109,6 +103,26 @@ export const useResetPassword = () => {
     {
       onError: () => {
         console.error(`QUERY - Error using useResetPassword.`);
+      },
+    }
+  );
+};
+
+export const useUpdateUser = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation<any, Error, UpdateUserPayload>(
+    async ({ userId, ...userData }) => {
+      const response = await userService.updateUser(userId, userData);
+      return response;
+    },
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('userData');
+        queryClient.invalidateQueries('transactions')
+      },
+      onError: (error, { userId }) => {
+        console.error(`QUERY - Error Updating budget with ID: ${userId}`);
       },
     }
   );

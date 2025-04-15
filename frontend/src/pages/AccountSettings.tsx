@@ -1,6 +1,7 @@
 import React from 'react';
 import { Grid, GridItem } from '@chakra-ui/react';
 import DashboardLayout from '../components/layout/DashboardLayout';
+import UserAccountSettings from '../components/account-settings/UpdateAccount';
 
 const AccountSettings: React.FC = () => {
   
@@ -11,6 +12,7 @@ const AccountSettings: React.FC = () => {
         gap={6}
       >
         <GridItem colSpan={{ base: 1, md: 2, lg: 4 }}>
+          <UserAccountSettings/>
         </GridItem>
       </Grid>
     </DashboardLayout>
