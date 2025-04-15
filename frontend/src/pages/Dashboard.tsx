@@ -15,7 +15,7 @@ const Dashboard: React.FC = () => {
     <DashboardLayout>
       <Box mb={6}>
         <Heading size="lg">
-          {userLoading ? 'Welcome!' : user ? `Welcome back, ${user.full_name}!` : 'Welcome!'}
+          {userLoading ? 'Welcome!' : user ? `Welcome back, ${user.first_name}!` : 'Welcome!'}
         </Heading>
       </Box>
       {/* Dashboard Widgets Grid */}

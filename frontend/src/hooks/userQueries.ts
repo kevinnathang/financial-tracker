@@ -61,11 +61,13 @@ export const useLogout = () => {
 
 export const useRegister = () => {
   return useMutation(
-    async (userData: { email: string; password: string; full_name: string }) => {
+    async (userData: { email: string; password: string; first_name: string, middle_name: string, last_name: string }) => {
       return await userService.registerUser(
         userData.email,
         userData.password,
-        userData.full_name
+        userData.first_name,
+        userData.middle_name,
+        userData.last_name
       );
     },
     {

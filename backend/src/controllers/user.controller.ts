@@ -7,7 +7,7 @@ import jwt, { Secret, SignOptions } from 'jsonwebtoken';
 export class UserController {
     static async createUser(req: Request, res: Response) {
         try {
-            const { email, password, full_name } = req.body;
+            const { email, password, first_name, middle_name, last_name } = req.body;
 
             const existingUser = await prisma.user.findUnique({ where: { email } });
             if (existingUser) {
@@ -20,7 +20,9 @@ export class UserController {
                 data: {
                     email,
                     password_hash: hashedPassword,
-                    full_name
+                    first_name,
+                    middle_name,
+                    last_name
                 }
             });
 
@@ -38,7 +40,9 @@ export class UserController {
                 user: {
                     id: user.id,
                     email: user.email,
-                    full_name: user.full_name,
+                    first_name: user.first_name,
+                    middle_name: user.middle_name,
+                    last_name: user.last_name,
                     balance: 0
                 }
             });
@@ -62,7 +66,9 @@ export class UserController {
                 user: {
                     id: user.id,
                     email: user.email,
-                    full_name: user.full_name,
+                    first_name: user.first_name,
+                    middle_name: user.middle_name,
+                    last_name: user.last_name,
                     balance: user.balance
                 }
             });
@@ -106,14 +112,16 @@ export class UserController {
 
     static async updateUser(req: Request, res: Response) {
         try {
-            const { email, full_name } = req.body;
+            const { email, first_name, middle_name, last_name } = req.body;
             const userId = req.user?.userId;
 
             const user = await prisma.user.update({
                 where: { id: userId },
                 data: {
                     email,
-                    full_name
+                    first_name,
+                    middle_name,
+                    last_name
                 }
             });
 
@@ -122,7 +130,9 @@ export class UserController {
                 user: {
                     id: user.id,
                     email: user.email,
-                    full_name: user.full_name
+                    first_name: user.first_name,
+                    middle_name: user.middle_name,
+                    last_name: user.last_name,
                 }
             });
         } catch (error) {

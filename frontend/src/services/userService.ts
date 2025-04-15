@@ -5,12 +5,16 @@ import api from "./api";
 export interface User {
   id: string;
   email: string;
-  full_name: string;
+  first_name: string;
+  middle_name: string;
+  last_name: string;
   balance: number;
 }
 
 export interface UserPayload {
-    full_name: string;
+    first_name: string;
+    middle_name: string;
+    last_name: string;
     email: string;
 }
 
@@ -19,9 +23,9 @@ export interface UpdateUserPayload extends UserPayload {
 }
 
 const userService = {
-    registerUser: async (email: string, password: string, full_name: string) => {
+    registerUser: async (email: string, password: string, first_name: string, middle_name: string, last_name: string) => {
         try {
-            const response = await api.post('/user/register', { email, password, full_name });
+            const response = await api.post('/user/register', { email, password, first_name, middle_name, last_name });
             return response.data;
         } catch (error) {
             console.error('SERVICE - Error in registerUser');

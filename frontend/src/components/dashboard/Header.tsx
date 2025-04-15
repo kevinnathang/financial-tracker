@@ -69,11 +69,11 @@ const Header: React.FC = () => {
             <Flex alignItems="center">
               <Avatar
                 size="sm"
-                name={user?.full_name || 'User'}
+                name={user?.first_name || 'User'}
                 mr={2}
               />
               <Text mr={1} display={{ base: 'none', md: 'block' }}>
-                {user?.full_name || 'User'}
+                {user?.first_name || 'User'}
               </Text>
               <ChakraIcon icon={FiChevronDown} fontSize="sm" />
             </Flex>

@@ -10,7 +10,14 @@ import { useRegister } from '../../hooks/userQueries';
 import { useHistory } from 'react-router-dom';
 
 const RegisterSchema = Yup.object().shape({
-  full_name: Yup.string()
+  first_name: Yup.string()
+    .min(2, 'Name is too short')
+    .max(50, 'Name is too long')
+    .required('Name is required'),
+  middle_name: Yup.string()
+    .min(2, 'Name is too short')
+    .max(50, 'Name is too long'),
+  last_name: Yup.string()
     .min(2, 'Name is too short')
     .max(50, 'Name is too long')
     .required('Name is required'),
@@ -38,14 +45,16 @@ const RegisterForm = () => {
       </Box>
 
       <Formik
-        initialValues={{ full_name: '', email: '', password: '', confirmPassword: '' }}
+        initialValues={{ first_name: '', middle_name: '', last_name: '', email: '', password: '', confirmPassword: '' }}
         validationSchema={RegisterSchema}
         onSubmit={async (values, { setSubmitting }) => {
           try {
             await registerMutation.mutateAsync({
               email: values.email,
               password: values.password,
-              full_name: values.full_name
+              first_name: values.first_name,
+              middle_name: values.middle_name,
+              last_name: values.last_name
             });
             
             toast({
@@ -70,10 +79,21 @@ const RegisterForm = () => {
         {({ isSubmitting, errors, touched }) => (
           <Form>
             <Stack spacing={4} mt={8}>
-              <FormControl isInvalid={!!errors.full_name && touched.full_name}>
-                <FormLabel>Full Name</FormLabel>
-                <Field as={Input} id="full_name" name="full_name" borderWidth={1} borderColor="black" />
-                <FormErrorMessage>{errors.full_name}</FormErrorMessage>
+              <FormControl isInvalid={!!errors.first_name && touched.first_name}>
+                <FormLabel>First Name</FormLabel>
+                <Field as={Input} id="first_name" name="first_name" borderWidth={1} borderColor="black" />
+                <FormErrorMessage>{errors.first_name}</FormErrorMessage>
+              </FormControl>
+
+              <FormControl isInvalid={!!errors.middle_name && touched.middle_name}>
+                <FormLabel>Middle Name</FormLabel>
+                <Field as={Input} id="middle_name" name="middle_name" borderWidth={1} borderColor="black" />
+              </FormControl>
+
+              <FormControl isInvalid={!!errors.last_name && touched.last_name}>
+                <FormLabel>Last Name</FormLabel>
+                <Field as={Input} id="last_name" name="last_name" borderWidth={1} borderColor="black" />
+                <FormErrorMessage>{errors.last_name}</FormErrorMessage>
               </FormControl>
 
               <FormControl isInvalid={!!errors.email && touched.email}>

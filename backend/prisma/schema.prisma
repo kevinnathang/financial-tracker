@@ -13,7 +13,9 @@ model User {
   email                String    @unique
   password_hash        String
   balance              Decimal   @default(0) @db.Decimal(12, 2)
-  full_name            String
+  first_name           String
+  middle_name          String?
+  last_name            String
   created_at           DateTime  @default(now()) @db.Timestamptz(6)
   updated_at           DateTime  @updatedAt @db.Timestamptz(6)
   resetPasswordToken   String?

@@ -17,18 +17,22 @@ import {
 import { useUserData, useUpdateUser } from '../../hooks/userQueries';
 
 const UserAccountSettings: React.FC = () => {
-    type FormField = 'full_name' | 'email';
+    type FormField = 'first_name' | 'middle_name' | 'last_name' | 'email';
   const toast = useToast();
   const storedUser = localStorage.getItem('user');
   const currentUserId = storedUser ? JSON.parse(storedUser).id : null;
   const { data: user, isLoading, isError } = useUserData(currentUserId);
   
   const [formData, setFormData] = useState({
-    full_name: '',
+    first_name: '',
+    middle_name: '',
+    last_name: '',
     email: ''
   });
   const [formErrors, setFormErrors] = useState({
-    full_name: '',
+    first_name: '',
+    middle_name: '',
+    last_name: '',
     email: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -38,7 +42,9 @@ const UserAccountSettings: React.FC = () => {
   useEffect(() => {
     if (user) {
       setFormData({
-        full_name: user.full_name || '',
+        first_name: user.first_name || '',
+        middle_name: user.middle_name || '',
+        last_name: user.last_name || '',
         email: user.email || ''
       });
     }
@@ -64,12 +70,15 @@ const UserAccountSettings: React.FC = () => {
   const validateForm = () => {
     let isValid = true;
     const errors = {
-      full_name: '',
-      email: ''
+        first_name: '',
+        middle_name: '',
+        last_name: '',
+        email: ''
     };
 
-    if (!formData.full_name.trim()) {
-      errors.full_name = 'Full name is required';
+    if (!formData.first_name.trim() || !formData.last_name.trim()) {
+      errors.first_name = 'First name is required';
+      errors.last_name = 'Last name is required'
       isValid = false;
     }
 
@@ -111,7 +120,9 @@ const UserAccountSettings: React.FC = () => {
       setIsSubmitting(true);
       await updateUserMutation.mutateAsync({
         userId: currentUserId,
-        full_name: formData.full_name,
+        first_name: formData.first_name,
+        middle_name: formData.middle_name,
+        last_name: formData.last_name,
         email: formData.email
       });
       
@@ -142,15 +153,37 @@ const UserAccountSettings: React.FC = () => {
       
       <form onSubmit={handleSubmit}>
         <VStack spacing={6} align="stretch">
-          <FormControl isInvalid={!!formErrors.full_name}>
-            <FormLabel htmlFor="full_name">Full Name</FormLabel>
+          <FormControl isInvalid={!!formErrors.first_name}>
+            <FormLabel htmlFor="first_name">First Name</FormLabel>
             <Input
-              id="full_name"
-              name="full_name"
-              value={formData.full_name}
+              id="first_name"
+              name="first_name"
+              value={formData.first_name}
               onChange={handleChange}
             />
-            <FormErrorMessage>{formErrors.full_name}</FormErrorMessage>
+            <FormErrorMessage>{formErrors.first_name}</FormErrorMessage>
+          </FormControl>
+
+          <FormControl isInvalid={!!formErrors.middle_name}>
+            <FormLabel htmlFor="middle_name">Middle Name</FormLabel>
+            <Input
+              id="middle_name"
+              name="middle_name"
+              value={formData.middle_name}
+              onChange={handleChange}
+            />
+            <FormErrorMessage>{formErrors.middle_name}</FormErrorMessage>
+          </FormControl>
+
+          <FormControl isInvalid={!!formErrors.last_name}>
+            <FormLabel htmlFor="last_name">Last Name</FormLabel>
+            <Input
+              id="last_name"
+              name="last_name"
+              value={formData.last_name}
+              onChange={handleChange}
+            />
+            <FormErrorMessage>{formErrors.last_name}</FormErrorMessage>
           </FormControl>
 
           <FormControl isInvalid={!!formErrors.email}>

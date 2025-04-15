@@ -8,7 +8,9 @@ export interface User {
     email: string;
     password_hash: string;
     balance: number;
-    full_name: string;
+    first_name: string;
+    middle_name?: string;
+    last_name: string;
     created_at: Date;
     updated_at: Date;
 }
