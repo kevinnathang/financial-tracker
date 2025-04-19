@@ -1,12 +1,12 @@
 // src/components/auth/RegisterForm.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Box, Button, Stack, Heading, Text, Link } from '@chakra-ui/react';
 import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/form-control';
 import { Input } from '@chakra-ui/input';
 import { useToast } from '@chakra-ui/toast';
-import { useRegister } from '../../hooks/userQueries';
+import { useInitiateUserRegistration } from '../../hooks/authQueries';
 import { useHistory } from 'react-router-dom';
 
 const RegisterSchema = Yup.object().shape({
@@ -33,8 +33,11 @@ const RegisterSchema = Yup.object().shape({
 });
 
 const RegisterForm = () => {
-  const registerMutation = useRegister();
+  const registerMutation = useInitiateUserRegistration();
   const history = useHistory();
+  const [registrationStep, setRegistrationStep] = useState('form'); 
+  const [registrationEmail, setRegistrationEmail] = useState('');
+  const [userId, setUserId] = useState('');
   const toast = useToast();
 
   return (

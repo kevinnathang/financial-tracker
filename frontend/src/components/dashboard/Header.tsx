@@ -3,7 +3,8 @@ import { Flex, Box, Text, Avatar, Menu, MenuButton, MenuList, MenuItem, MenuDivi
 import { FiBell, FiChevronDown } from 'react-icons/fi';
 import { useHistory, useLocation } from 'react-router-dom';
 import { ChakraIcon } from '../ui/ChakraIcon';
-import { useUserData, useLogout } from '../../hooks/userQueries';
+import { useUserData } from '../../hooks/userQueries';
+import { useLogout } from '../../hooks/authQueries';
 
 const Header: React.FC = () => {
   const pageTitles: Record<string, string> = {

@@ -11,6 +11,7 @@ import Dashboard from '../pages/Dashboard';
 import Tags from '../pages/Tags'
 import Budget from '../pages/Budget'
 import AccountSettings from '../pages/AccountSettings'
+import Verify from '../pages/VerifyUser';
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const storedUser = localStorage.getItem('user')
@@ -36,6 +37,7 @@ const AppRoutes = () => {
       <Route path="/register" component={Register} />
       <Route path="/reset-password/:token" component={ResetPassword} />
       <Route path="/request-reset-password" component={RequestResetPassword} />
+      <Route path="/verify/:verificationToken" component={Verify} />
       
       <Route
         path="/dashboard"

@@ -6,7 +6,7 @@ import { Box, Button, Stack, Heading, Text, Link, useToast } from '@chakra-ui/re
 import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/form-control';
 import { Input } from '@chakra-ui/input';
 import { useHistory } from 'react-router-dom';
-import { useRequestPasswordReset } from '../../hooks/userQueries'; 
+import { useRequestPasswordReset } from '../../hooks/authQueries'; 
 
 const RequestPasswordResetSchema = Yup.object().shape({
   email: Yup.string()

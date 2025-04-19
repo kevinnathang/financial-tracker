@@ -23,16 +23,6 @@ export interface UpdateUserPayload extends UserPayload {
 }
 
 const userService = {
-    registerUser: async (email: string, password: string, first_name: string, middle_name: string, last_name: string) => {
-        try {
-            const response = await api.post('/user/register', { email, password, first_name, middle_name, last_name });
-            return response.data;
-        } catch (error) {
-            console.error('SERVICE - Error in registerUser');
-            throw error;
-        }
-    },
-
     getUser: async(id: string) => {
         try {
             const response = await api.get(`/user/${id}`)

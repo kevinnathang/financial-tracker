@@ -2,6 +2,26 @@
 import api from "./api";
 
 const authService = {
+    initiateUserRegistration: async (email: string, password: string, first_name: string, middle_name: string, last_name: string) => {
+        try {
+            const response = await api.post('/auth/register', { email, password, first_name, middle_name, last_name });
+            return response.data;
+        } catch (error) {
+            console.error('SERVICE - Error in initiateUserRegistration');
+            throw error;
+        }
+    },
+
+    verifyUser: async (verificationToken: string) => {
+        try {
+            const response = await api.post(`/auth/verify/${verificationToken}`);
+            return response.data;
+        } catch (error) {
+            console.error('SERVICE - Error in verifyUser');
+            throw error;
+        }
+    },
+
     login: async (email: string, password: string) => {
         try {
             const response = await api.post('/auth/login', { email, password });

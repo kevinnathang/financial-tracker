@@ -5,53 +5,6 @@ import { hash } from 'bcryptjs';
 import jwt, { Secret, SignOptions } from 'jsonwebtoken';
 
 export class UserController {
-    static async createUser(req: Request, res: Response) {
-        try {
-            const { email, password, first_name, middle_name, last_name } = req.body;
-
-            const existingUser = await prisma.user.findUnique({ where: { email } });
-            if (existingUser) {
-                return res.status(400).json({ message: 'User already exists' });
-            }
-
-            const hashedPassword = await hash(password, 10);
-
-            const user = await prisma.user.create({
-                data: {
-                    email,
-                    password_hash: hashedPassword,
-                    first_name,
-                    middle_name,
-                    last_name
-                }
-            });
-
-            const jwtSecret: Secret = process.env.JWT_SECRET || 'default-secret';
-            const jwtOptions: SignOptions = { expiresIn: 24 * 60 * 60 };
-            const token = jwt.sign(
-                { userId: user.id },
-                jwtSecret,
-                jwtOptions
-            );
-
-            return res.status(201).json({
-                message: 'User created successfully',
-                token,
-                user: {
-                    id: user.id,
-                    email: user.email,
-                    first_name: user.first_name,
-                    middle_name: user.middle_name,
-                    last_name: user.last_name,
-                    balance: 0
-                }
-            });
-        } catch (error) {
-            console.error('Registration error:', error);
-            return res.status(500).json({ message: 'Error creating user' });
-        }
-    }
-
     static async getUser(req: Request, res: Response) {
         try {
             const user = await prisma.user.findUnique({
@@ -69,7 +22,8 @@ export class UserController {
                     first_name: user.first_name,
                     middle_name: user.middle_name,
                     last_name: user.last_name,
-                    balance: user.balance
+                    balance: user.balance,
+                    is_verified: user.is_verified
                 }
             });
         } catch (error) {
@@ -133,6 +87,7 @@ export class UserController {
                     first_name: user.first_name,
                     middle_name: user.middle_name,
                     last_name: user.last_name,
+                    is_verified: user.is_verified
                 }
             });
         } catch (error) {

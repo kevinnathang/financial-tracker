@@ -5,7 +5,7 @@ import * as Yup from 'yup';
 import { Box, Button, Stack, Heading, Text, Link } from '@chakra-ui/react';
 import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/form-control';
 import { Input } from '@chakra-ui/input';
-import { useLogin } from '../../hooks/userQueries';
+import { useLogin } from '../../hooks/authQueries';
 import { useHistory } from 'react-router-dom';
 
 const LoginSchema = Yup.object().shape({
