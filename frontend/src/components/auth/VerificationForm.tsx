@@ -21,7 +21,6 @@ const VerificationForm = ({ email, onBack }: VerificationFormProps) => {
       setIsVerifying(true);
       const response = await verifyMutation.mutateAsync(verificationToken);
       
-      // Store user token from response
       localStorage.setItem('token', response.token);
       
       toast({
@@ -32,8 +31,7 @@ const VerificationForm = ({ email, onBack }: VerificationFormProps) => {
         isClosable: true,
       });
       
-      // Redirect to dashboard after verification
-      history.push('/dashboard');
+      history.push('/login');
     } catch (error: any) {
       toast({
         title: "Verification failed",

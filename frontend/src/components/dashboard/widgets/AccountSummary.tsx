@@ -62,10 +62,7 @@ const { data: monthlyStats, isLoading, isError } = useMonthlyStats();
 const { data } = useBudgets()
 const budgetsArray = data?.budgets || [];
   
-// Find the main budget
 const mainBudget = budgetsArray.find(budget => budget.is_main === true);
-
-console.log('Main budget:', mainBudget);
   
   if (isLoading) {
     return (

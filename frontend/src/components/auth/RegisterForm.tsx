@@ -1,5 +1,5 @@
 // src/components/auth/RegisterForm.tsx
-import React, { useState } from 'react';
+import React from 'react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Box, Button, Stack, Heading, Text, Link } from '@chakra-ui/react';
@@ -35,9 +35,6 @@ const RegisterSchema = Yup.object().shape({
 const RegisterForm = () => {
   const registerMutation = useInitiateUserRegistration();
   const history = useHistory();
-  const [registrationStep, setRegistrationStep] = useState('form'); 
-  const [registrationEmail, setRegistrationEmail] = useState('');
-  const [userId, setUserId] = useState('');
   const toast = useToast();
 
   return (
@@ -66,7 +63,7 @@ const RegisterForm = () => {
               duration: 3000,
               isClosable: true,
             });
-            history.push('/dashboard');
+            history.push('/login');
           } catch (error: any) {
             toast({
               title: "Registration failed",
