@@ -1,13 +1,13 @@
 // src/components/auth/RegisterForm.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
 import { Box, Button, Stack, Heading, Text, Link } from '@chakra-ui/react';
 import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/form-control';
 import { Input } from '@chakra-ui/input';
-import { useToast } from '@chakra-ui/toast';
 import { useInitiateUserRegistration } from '../../hooks/authQueries';
 import { useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify'
 
 const RegisterSchema = Yup.object().shape({
   first_name: Yup.string()
@@ -35,7 +35,30 @@ const RegisterSchema = Yup.object().shape({
 const RegisterForm = () => {
   const registerMutation = useInitiateUserRegistration();
   const history = useHistory();
-  const toast = useToast();
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const handleSubmit = async (values: any) => {
+    try {
+      setIsSubmitting(true)
+
+      await registerMutation.mutateAsync({
+        email: values.email,
+        password: values.password,
+        first_name: values.first_name,
+        middle_name: values.middle_name,
+        last_name: values.last_name
+      });
+      
+      toast.success("Registration successful! Please check your email for verification. Redirecting you to the login page.");
+      setTimeout(() => {
+        history.push('/login');
+      }, 3000);
+    } catch (error: any) {
+      toast.error("Registration failed. Please verify the inserted information or contact support")
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
 
   return (
     <Box p={20} maxWidth="500px" borderWidth={0} borderRadius={0} boxShadow="lg">
@@ -47,36 +70,9 @@ const RegisterForm = () => {
       <Formik
         initialValues={{ first_name: '', middle_name: '', last_name: '', email: '', password: '', confirmPassword: '' }}
         validationSchema={RegisterSchema}
-        onSubmit={async (values, { setSubmitting }) => {
-          try {
-            await registerMutation.mutateAsync({
-              email: values.email,
-              password: values.password,
-              first_name: values.first_name,
-              middle_name: values.middle_name,
-              last_name: values.last_name
-            });
-            
-            toast({
-              title: "Registration successful",
-              status: "success",
-              duration: 3000,
-              isClosable: true,
-            });
-            history.push('/login');
-          } catch (error: any) {
-            toast({
-              title: "Registration failed",
-              description: error.response?.data?.message || "An error occurred",
-              status: "error",
-              duration: 5000,
-              isClosable: true,
-            });
-          }
-          setSubmitting(false);
-        }}
+        onSubmit={handleSubmit}
       >
-        {({ isSubmitting, errors, touched }) => (
+        {({ errors, touched }) => (
           <Form>
             <Stack spacing={4} mt={8}>
               <FormControl isInvalid={!!errors.first_name && touched.first_name}>

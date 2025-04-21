@@ -13,6 +13,8 @@ import Budget from '../pages/Budget'
 import AccountSettings from '../pages/AccountSettings'
 import Verify from '../pages/VerifyUser';
 
+import 'react-toastify/dist/ReactToastify.css';
+
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const storedUser = localStorage.getItem('user') || null;
 
@@ -66,8 +68,7 @@ const AppRoutes = () => {
           </ProtectedRoute>
         )}
       />
-
-<Route
+      <Route
         path="/account-settings"
         exact
         render={() => (

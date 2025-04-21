@@ -5,6 +5,7 @@ import { QueryClientProvider } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import AppRoutes from './routes/AppRoutes';
 import { queryClient } from './lib/reactQuery';
+import { ToastContainer } from 'react-toastify';
 
 const theme = extendTheme({
   config: {
@@ -28,6 +29,7 @@ const App = () => {
       <ChakraProvider theme={theme}>
         <BrowserRouter>
           <AppRoutes />
+          <ToastContainer position="bottom-right" autoClose={3000} />
         </BrowserRouter>
       </ChakraProvider>
       <ReactQueryDevtools initialIsOpen={false} />

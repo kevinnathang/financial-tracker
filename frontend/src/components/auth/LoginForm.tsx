@@ -7,6 +7,7 @@ import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/form-contro
 import { Input } from '@chakra-ui/input';
 import { useLogin } from '../../hooks/authQueries';
 import { useHistory } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 const LoginSchema = Yup.object().shape({
     email: Yup.string()
@@ -30,6 +31,7 @@ const LoginForm = () => {
             history.push('/dashboard');
         } catch (error) {
             console.error("Login failed:", error);
+            toast.error("Invalid credentials.")
         } finally {
             setSubmitting(false);
         }
