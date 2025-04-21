@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, GridItem } from '@chakra-ui/react';
 import DashboardLayout from '../components/layout/DashboardLayout';
-import BudgetManagement from '../components/dashboard/BudgetManagement';
+import BudgetManagement from '../components/budget/BudgetManagement';
 
 const Budget: React.FC = () => {
   

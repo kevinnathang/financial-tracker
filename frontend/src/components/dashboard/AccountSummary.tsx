@@ -3,10 +3,10 @@ import React from 'react';
 import { Box, SimpleGrid, Stat, StatLabel, StatNumber, StatHelpText, StatArrow, Flex, Spinner, Text } from '@chakra-ui/react';
 import { FiDollarSign, FiArrowUpRight, FiArrowDownRight, FiPieChart } from 'react-icons/fi';
 import { IconType } from 'react-icons';
-import { ChakraIcon } from '../../ui/ChakraIcon';
-import { useUserData } from '../../../hooks/userQueries';
-import { useMonthlyStats } from '../../../hooks/transactionQueries';
-import { useBudgets } from '../../../hooks/budgetQueries';
+import { ChakraIcon } from '../ui/ChakraIcon';
+import { useUserData } from '../../hooks/userQueries';
+import { useMonthlyStats } from '../../hooks/transactionQueries';
+import { useBudgets } from '../../hooks/budgetQueries';
 
 interface StatCardProps {
   title: string;
@@ -55,9 +55,8 @@ const StatCard: React.FC<StatCardProps> = ({ title, value, change, icon, accentC
 
 const AccountSummary: React.FC = () => {
 const storedUser = localStorage.getItem('user')
-const currentUserId = storedUser ? JSON.parse(storedUser).id : null;
 
-const { data: user  } = useUserData(currentUserId);
+const { data: user  } = useUserData(storedUser || '');
 const { data: monthlyStats, isLoading, isError } = useMonthlyStats();
 const { data } = useBudgets()
 const budgetsArray = data?.budgets || [];

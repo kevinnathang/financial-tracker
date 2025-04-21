@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Box, Heading, Table, Thead, Tbody, Tr, Th, Td, Flex, Text, Button, Spinner, IconButton } from '@chakra-ui/react';
 import * as Icons from 'react-icons/fi';
 import { useHistory } from 'react-router-dom';
-import { ChakraIcon } from '../../ui/ChakraIcon';
-import { useTransactions, useDeleteTransaction } from '../../../hooks/transactionQueries';
-import TransactionModal from '../TransactionModal';
-import { Transaction } from '../../../services/transactionService';
+import { ChakraIcon } from '../ui/ChakraIcon';
+import { useTransactions, useDeleteTransaction } from '../../hooks/transactionQueries';
+import TransactionModal from './TransactionModal';
+import { Transaction } from '../../services/transactionService';
 
 const RecentTransactions: React.FC = () => {
   const history = useHistory();

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, GridItem } from '@chakra-ui/react';
 import DashboardLayout from '../components/layout/DashboardLayout';
-import  CreateTag  from '../components/dashboard/widgets/CreateTag'
+import CreateTag from '../components/tags/CreateTag'
 
 const Dashboard: React.FC = () => {
   

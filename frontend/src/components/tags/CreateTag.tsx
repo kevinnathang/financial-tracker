@@ -29,9 +29,9 @@ import {
   SliderThumb,
 } from '@chakra-ui/react';
 import * as Icons from 'react-icons/fi';
-import { useCreateTag, useTags, useDeleteTag, useUpdateTag } from '../../../hooks/tagQueries';
-import { ChakraIcon } from '../../ui/ChakraIcon';
-import { Tag } from '../../../services/tagService';
+import { useCreateTag, useTags, useDeleteTag, useUpdateTag } from '../../hooks/tagQueries';
+import { ChakraIcon } from '../ui/ChakraIcon';
+import { Tag } from '../../services/tagService';
 interface HSV {
   h: number;
   s: number;

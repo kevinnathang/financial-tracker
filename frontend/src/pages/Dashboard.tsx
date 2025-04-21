@@ -1,15 +1,14 @@
 import React from 'react';
 import { Grid, GridItem, Heading, Box } from '@chakra-ui/react';
 import DashboardLayout from '../components/layout/DashboardLayout';
-import AccountSummary from '../components/dashboard/widgets/AccountSummary';
-import RecentTransactions from '../components/dashboard/widgets/RecentTransactions';
+import AccountSummary from '../components/dashboard/AccountSummary';
+import RecentTransactions from '../components/dashboard/RecentTransactions';
 import { useUserData } from '../hooks/userQueries';
 
 const Dashboard: React.FC = () => {
   const storedUser = localStorage.getItem('user');
-  const currentUserId = storedUser ? JSON.parse(storedUser).id : null;
   
-  const { data: user, isLoading: userLoading } = useUserData(currentUserId);
+  const { data: user, isLoading: userLoading } = useUserData(storedUser || '' );
   
   return (
     <DashboardLayout>

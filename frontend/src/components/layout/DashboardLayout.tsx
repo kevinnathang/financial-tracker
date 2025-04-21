@@ -1,8 +1,8 @@
 // src/components/dashboard/DashboardLayout.tsx
 import React, { ReactNode } from 'react';
 import { Box, Flex } from '@chakra-ui/react';
-import Sidebar from '../dashboard/Sidebar';
-import Header from '../dashboard/Header';
+import Sidebar from '../general/Sidebar';
+import Header from '../general/Header';
 
 interface DashboardLayoutProps {
   children: ReactNode;

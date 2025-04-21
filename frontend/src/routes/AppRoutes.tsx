@@ -14,10 +14,9 @@ import AccountSettings from '../pages/AccountSettings'
 import Verify from '../pages/VerifyUser';
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-  const storedUser = localStorage.getItem('user')
-  const currentUserId = storedUser ? JSON.parse(storedUser).id : null;
+  const storedUser = localStorage.getItem('user') || null;
 
-  const { data: user, isLoading: userLoading } = useUserData(currentUserId);
+  const { data: user, isLoading: userLoading } = useUserData(storedUser || '' );
 
   if (userLoading) {
     return <div>Loading...</div>;
