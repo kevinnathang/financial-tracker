@@ -2,11 +2,12 @@
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
-import { Box, Button, Stack, Heading, Text, useToast } from '@chakra-ui/react';
+import { Box, Button, Stack, Heading, Text } from '@chakra-ui/react';
 import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/form-control';
 import { Input } from '@chakra-ui/input';
 import { useHistory, useParams } from 'react-router-dom';
 import { useResetPassword } from '../../hooks/authQueries';
+import { toast } from 'react-toastify';
 
 const ResetPasswordSchema = Yup.object().shape({
   password: Yup.string()
@@ -24,7 +25,6 @@ interface ResetParams {
 const ResetPasswordForm = () => {
   const { token } = useParams<ResetParams>();
   const history = useHistory();
-  const toast = useToast();
   const resetPasswordMutation = useResetPassword()
 
   const handleFormSubmit = async (values: { password: string }, { setSubmitting }: any) => {
@@ -34,23 +34,14 @@ const ResetPasswordForm = () => {
         password: values.password
       });
           
-      toast({
-        title: "Password reset successful",
-        description: "Your password has been updated successfully",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
-      
-      history.push('/login');
+      toast.success("Your password has been updated successfully")
+
+      setTimeout(() => {
+        history.push('/login');
+      }, 3000);
+
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.response?.data?.message || "Failed to reset password. The link may have expired.",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
+      toast.error(error.response?.data?.message || "Failed to reset password. The link may have expired.")
     } finally {
       setSubmitting(false);
     }

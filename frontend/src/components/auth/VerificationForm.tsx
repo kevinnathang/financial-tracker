@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Box, Button, Stack, Heading, Text, useToast } from '@chakra-ui/react';
+import { Box, Button, Stack, Heading, Text } from '@chakra-ui/react';
 import { useHistory, useParams } from 'react-router-dom';
 import { useVerifyUser } from '../../hooks/authQueries';
+import { toast } from 'react-toastify';
 
 interface VerificationFormProps {
   email?: string;
@@ -10,7 +11,6 @@ interface VerificationFormProps {
 
 const VerificationForm = ({ email, onBack }: VerificationFormProps) => {
   const history = useHistory();
-  const toast = useToast();
   const { verificationToken } = useParams<{ verificationToken: string }>();
   const [isVerifying, setIsVerifying] = useState(false);
 
@@ -23,23 +23,14 @@ const VerificationForm = ({ email, onBack }: VerificationFormProps) => {
       
       localStorage.setItem('token', response.token);
       
-      toast({
-        title: "Account verified",
-        description: "Your account has been successfully verified",
-        status: "success",
-        duration: 3000,
-        isClosable: true,
-      });
-      
-      history.push('/login');
+      toast.success("Your account has been successfully verified")
+
+      setTimeout(() => {
+        history.push('/login');
+      }, 3000);
+
     } catch (error: any) {
-      toast({
-        title: "Verification failed",
-        description: error.response?.data?.message || "An error occurred",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
+      toast.error(error.response?.data?.message || "An error occurred")
     } finally {
       setIsVerifying(false);
     }

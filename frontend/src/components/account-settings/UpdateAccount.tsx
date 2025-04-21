@@ -10,15 +10,14 @@ import {
   HStack,
   Spinner,
   Text,
-  useToast,
   Divider,
   Heading
 } from '@chakra-ui/react';
 import { useUserData, useUpdateUser } from '../../hooks/userQueries';
+import { toast } from 'react-toastify';
 
 const UserAccountSettings: React.FC = () => {
     type FormField = 'first_name' | 'middle_name' | 'last_name' | 'email';
-  const toast = useToast();
   const storedUser = localStorage.getItem('user');
   const currentUserId = storedUser ? JSON.parse(storedUser).id : null;
   const { data: user, isLoading, isError } = useUserData(currentUserId);
@@ -126,21 +125,9 @@ const UserAccountSettings: React.FC = () => {
         email: formData.email
       });
       
-      toast({
-        title: 'Success',
-        description: 'Your account information has been updated successfully.',
-        status: 'success',
-        duration: 3000,
-        isClosable: true
-      });
+      toast.success('Your account information has been updated successfully.')
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to update account information',
-        status: 'error',
-        duration: 3000,
-        isClosable: true
-      });
+      toast.error(error instanceof Error ? error.message : 'Failed to update account information',)
     } finally {
       setIsSubmitting(false);
     }

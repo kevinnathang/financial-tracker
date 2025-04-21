@@ -2,11 +2,12 @@
 import React from 'react';
 import { Formik, Form, Field } from 'formik';
 import * as Yup from 'yup';
-import { Box, Button, Stack, Heading, Text, Link, useToast } from '@chakra-ui/react';
+import { Box, Button, Stack, Heading, Text, Link } from '@chakra-ui/react';
 import { FormControl, FormLabel, FormErrorMessage } from '@chakra-ui/form-control';
 import { Input } from '@chakra-ui/input';
 import { useHistory } from 'react-router-dom';
 import { useRequestPasswordReset } from '../../hooks/authQueries'; 
+import { toast } from 'react-toastify';
 
 const RequestPasswordResetSchema = Yup.object().shape({
   email: Yup.string()
@@ -16,30 +17,20 @@ const RequestPasswordResetSchema = Yup.object().shape({
 
 const RequestPasswordResetForm = () => {
   const history = useHistory();
-  const toast = useToast();
   const useRequestPasswordResetMutation = useRequestPasswordReset()
 
   const handleFormSubmit = async (values: { email: string }, { setSubmitting }: any) => {
     try {
       await useRequestPasswordResetMutation.mutateAsync(values.email);
       
-      toast({
-        title: "Reset link sent",
-        description: "Check your email for the password reset link",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
+      toast.success( "Check your email for the password reset link.")
       
-      history.push('/login');
+      setTimeout(() => {
+        history.push('/login');
+      }, 3000);
+
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.response?.data?.message || "Failed to send reset link",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
+      toast.error(error.response?.data?.message || "Failed to send reset link")
     } finally {
       setSubmitting(false);
     }
