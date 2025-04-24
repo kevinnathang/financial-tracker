@@ -37,7 +37,7 @@ const VerificationForm = ({ email, onBack }: VerificationFormProps) => {
   };
 
   return (
-    <Box textAlign="center">
+    <Box textAlign="center" padding="20px">
       <Heading size="lg">Verify Your Email</Heading>
       <Text mt={4} color="gray.600">
         {email ? `We've sent a verification link to ${email}` : 'Complete your account verification'}
@@ -51,6 +51,9 @@ const VerificationForm = ({ email, onBack }: VerificationFormProps) => {
           <Button
             backgroundColor="#4FD1C5"
             color="white"
+            maxWidth="300px"
+            mx="auto"
+            display="box"
             _hover={{
               backgroundColor: "#319795"
             }}
@@ -61,16 +64,14 @@ const VerificationForm = ({ email, onBack }: VerificationFormProps) => {
             Verify My Account
           </Button>
           
-          {onBack && (
             <Button
               variant="link"
-              onClick={onBack}
+              onClick={(() => history.push('/register'))}
               color="gray.500"
               fontSize="sm"
             >
               ← Back to registration
             </Button>
-          )}
           
           <Text fontSize="sm" color="gray.500" mt={4}>
             Having trouble? Please contact support for assistance.

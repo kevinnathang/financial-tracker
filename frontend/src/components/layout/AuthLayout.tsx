@@ -40,6 +40,11 @@ const AuthLayout: React.FC<AuthLayoutProps> = ({ children }) => {
         boxShadow="0 10px 25px rgba(0, 0, 0, 0.95)"
         backdropFilter="blur(5px)"
         zIndex={1}
+        sx={{
+          "& .css-pnoj7g": {
+            padding: "20px"
+          }
+        }}
       >
         {children}
       </Box>
