@@ -10,7 +10,6 @@ import {
   HStack,
   Spinner,
   Text,
-  useToast,
   Select,
   Flex,
   Grid,
@@ -32,6 +31,8 @@ import * as Icons from 'react-icons/fi';
 import { useCreateTag, useTags, useDeleteTag, useUpdateTag } from '../../hooks/tagQueries';
 import { ChakraIcon } from '../ui/ChakraIcon';
 import { Tag } from '../../services/tagService';
+import { toast } from 'react-toastify';
+
 interface HSV {
   h: number;
   s: number;
@@ -221,7 +222,6 @@ const TagManagement: React.FC = () => {
   const [ selectedTag, setSelectedTag ] = useState<Tag | undefined>(undefined);
   const tagMutation = useCreateTag();
   const updateTagMutation = useUpdateTag();
-  const toast = useToast();
   const { mutate: deleteTag } = useDeleteTag();
   
   if (isLoading) {
@@ -259,13 +259,7 @@ const TagManagement: React.FC = () => {
     if (!selectedTag) return;
 
     if (!selectedTag.name || !selectedTag.color) {
-      toast({
-        title: 'Error',
-        description: 'Please fill all required fields',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+      toast.error('Please fill all required fields')
       return;
     }
 
@@ -278,23 +272,10 @@ const TagManagement: React.FC = () => {
         icon: selectedTag.icon,
       });
       
-      toast({
-        title: 'Success',
-        description: 'Tag updated successfully',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
-      
+      toast.success('Tag updated successfully')
       closeEditModal();
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to update tag',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+      toast.error('Failed to update tag')
     } finally {
       setIsSubmitting(false);
     }
@@ -308,13 +289,7 @@ const TagManagement: React.FC = () => {
     }
     
     if (!name || !color) {
-      toast({
-        title: 'Error',
-        description: 'Please fill all required fields',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+      toast.error('Please fill all required fields')
       return;
     }
     
@@ -326,23 +301,10 @@ const TagManagement: React.FC = () => {
         icon: icon,
       });
       
-      toast({
-        title: 'Success',
-        description: 'Tag created successfully',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
-      
+      toast.success('Tag created successfully')
       resetForm();
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to create tag',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+      toast.error('Failed to create tag')
     } finally {
       setIsSubmitting(false);
     }

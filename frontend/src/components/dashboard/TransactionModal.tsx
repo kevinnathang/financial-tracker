@@ -15,7 +15,6 @@ import {
   NumberInput,
   NumberInputField,
   Stack,
-  useToast,
   Radio,
   RadioGroup,
   Flex,
@@ -26,6 +25,7 @@ import {
 import { useCreateTransaction, useUpdateTransaction } from '../../hooks/transactionQueries';
 import { useTags } from '../../hooks/tagQueries';
 import { Transaction } from '../../services/transactionService';
+import { toast } from 'react-toastify';
 
 interface TransactionModalProps {
   isOpen: boolean;
@@ -49,7 +49,6 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
 
     const createMutation = useCreateTransaction();
     const updateMutation = useUpdateTransaction();
-    const toast = useToast();
 
     useEffect(() => {
         if (transaction) {
@@ -86,13 +85,7 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
 
     const handleSubmit = async () => {
         if (!type || !amount || !date) {
-            toast({
-                title: 'Error',
-                description: 'Please fill all required fields',
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            });
+            toast.error('Please fill all required fields')
             return;
         }
 
@@ -113,34 +106,16 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
                     transactionId: transaction.id
                 });
                 
-                toast({
-                    title: 'Success',
-                    description: 'Transaction updated successfully',
-                    status: 'success',
-                    duration: 3000,
-                    isClosable: true,
-                });
+                toast.success('Transaction updated successfully')
             } else {
                 await createMutation.mutateAsync(transactionData);
                 
-                toast({
-                    title: 'Success',
-                    description: 'Transaction created successfully',
-                    status: 'success',
-                    duration: 3000,
-                    isClosable: true,
-                });
+                toast.success('Transaction created successfully')
             }
             
             onClose();
         } catch (error) {
-            toast({
-                title: 'Error',
-                description: error instanceof Error ? error.message : 'Failed to save transaction',
-                status: 'error',
-                duration: 3000,
-                isClosable: true,
-            });
+            toast.error('Failed to save transaction')
         } finally {
             setIsSubmitting(false);
         }

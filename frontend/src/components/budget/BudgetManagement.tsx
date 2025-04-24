@@ -10,7 +10,6 @@ import {
   HStack,
   Spinner,
   Text,
-  useToast,
   Select,
   Grid,
   GridItem,
@@ -32,6 +31,8 @@ import {
 import * as Icons from 'react-icons/fi';
 import { useCreateBudget, useBudgets, useDeleteBudget, useUpdateBudget } from '../../hooks/budgetQueries';
 import { ChakraIcon } from '../ui/ChakraIcon';
+import { toast } from 'react-toastify';
+
 import { Budget } from '../../services/budgetService';
 
 const BudgetManagement: React.FC = () => {
@@ -49,7 +50,6 @@ const BudgetManagement: React.FC = () => {
   
   const budgetMutation = useCreateBudget();
   const updateBudgetMutation = useUpdateBudget();
-  const toast = useToast();
   const { mutate: deleteBudget } = useDeleteBudget();
   
   if (isLoading) {
@@ -87,13 +87,7 @@ const BudgetManagement: React.FC = () => {
     if (!selectedBudget) return;
 
     if (!selectedBudget.name || !selectedBudget.amount) {
-      toast({
-        title: 'Error',
-        description: 'Please fill all required fields',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+      toast.error('Please fill all required fields');
       return;
     }
 
@@ -110,23 +104,10 @@ const BudgetManagement: React.FC = () => {
         description: selectedBudget.description
       });
       
-      toast({
-        title: 'Success',
-        description: 'Budget updated successfully',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
-      
+      toast.success('Budget updated successfully')
       closeEditModal();
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to update budget',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+      toast.error('Failed to update budgets');
     } finally {
       setIsSubmitting(false);
     }
@@ -140,13 +121,7 @@ const BudgetManagement: React.FC = () => {
     }
     
     if (!name || !amount) {
-      toast({
-        title: 'Error',
-        description: 'Please fill all required fields',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+      toast.error('Please fill all required fields');
       return;
     }
     
@@ -162,23 +137,10 @@ const BudgetManagement: React.FC = () => {
         description
       });
       
-      toast({
-        title: 'Success',
-        description: 'Budget created successfully',
-        status: 'success',
-        duration: 3000,
-        isClosable: true,
-      });
-      
+      toast.success('Budget created successfully');
       resetForm();
     } catch (error) {
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to create budget',
-        status: 'error',
-        duration: 3000,
-        isClosable: true,
-      });
+      toast.error('Failed to create budget');
     } finally {
       setIsSubmitting(false);
     }
