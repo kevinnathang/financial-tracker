@@ -1,10 +1,26 @@
 // src/controllers/user.controller.ts
 import { Request, Response } from 'express';
 import prisma from '../lib/prisma';
-import { hash } from 'bcryptjs';
-import jwt, { Secret, SignOptions } from 'jsonwebtoken';
+import emailClient from '../config/email';
 
 export class UserController {
+    static async sendEmailChangeEmail(currentUserEmail: string, newEmail: string) {
+        const baseUrl = 'localhost:3001';
+
+        const msg = {
+            to: currentUserEmail,
+            from: process.env.EMAIL_FROM,
+            subject: 'Your email address was changed',
+            html: `
+            <h2>Email Address Change</h2>
+            <p>Thank you for using our services! This email is just to notify you that your email address was changed from ${currentUserEmail} to ${newEmail}.</p>
+            <p>If you did not make this change, please contact support for assistance.</p>
+          `
+        };
+
+        return emailClient.send(msg);
+    }
+
     static async getUser(req: Request, res: Response) {
         try {
             const user = await prisma.user.findUnique({
@@ -69,6 +85,14 @@ export class UserController {
             const { email, first_name, middle_name, last_name } = req.body;
             const userId = req.user?.userId;
 
+            const currentUser = await prisma.user.findUnique({
+                where: { id: userId }
+            });
+
+            if (!currentUser) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+
             const user = await prisma.user.update({
                 where: { id: userId },
                 data: {
@@ -78,6 +102,10 @@ export class UserController {
                     last_name
                 }
             });
+
+            if (email && email !== currentUser.email) {
+                await UserController.sendEmailChangeEmail(currentUser.email, email);
+            }
 
             return res.json({
                 message: 'User updated',
