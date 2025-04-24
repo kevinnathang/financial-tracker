@@ -11,5 +11,6 @@ router.post('/verify/:verificationToken', AuthController.verifyUser);
 router.post('/logout', authMiddleware, AuthController.logout);
 router.post('/request-reset-password', AuthController.requestResetPassword)
 router.post('/reset-password/:token', AuthController.resetPassword)
+router.post('/change-password', authMiddleware, AuthController.changePassword)
 
 export default router;

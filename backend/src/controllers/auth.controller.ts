@@ -7,44 +7,59 @@ import jwt, { Secret, SignOptions } from 'jsonwebtoken';
 import { tokenBlacklist } from '../middleware/auth.middleware';
 import emailClient from '../config/email';
 
-async function sendVerificationEmail(email: string, verificationToken: string) {
-    const baseUrl = 'localhost:3001';
-    const verificationUrl = `${baseUrl}/verify/${verificationToken}`;
-
-    const msg = {
-        to: email,
-        from: process.env.EMAIL_FROM,
-        subject: 'Verify Your Account',
-        html: `
-        <h2>Verify Your Account</h2>
-        <p>Thank you for registering! To complete your account setup, please click the link below:</p>
-        <p><a href="${verificationUrl}" style="padding: 10px 15px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">Verify My Account</a></p>
-        <p>Or copy and paste this URL into your browser:</p>
-        <p>${verificationUrl}</p>
-        <p>This link will expire in 1 hour.</p>
-        <p>If you did not request this, please ignore this email.</p>
-      `
-    };
-
-    return emailClient.send(msg);
-}
-
-async function sendWelcomeEmail(user: { email: string, first_name: string }) {
-    const msg = {
-        to: user.email,
-        from: process.env.EMAIL_FROM,
-        subject: 'Welcome to Our Platform!',
-        html: `
-        <h2>Welcome ${user.first_name}!</h2>
-        <p>Your account has been successfully verified.</p>
-        <p>You can now enjoy all the features of our platform.</p>
-      `
-    };
-
-    return emailClient.send(msg);
-}
 
 export class AuthController {
+    static async sendVerificationEmail(email: string, verificationToken: string) {
+        const baseUrl = 'localhost:3001';
+        const verificationUrl = `${baseUrl}/verify/${verificationToken}`;
+
+        const msg = {
+            to: email,
+            from: process.env.EMAIL_FROM,
+            subject: 'Verify Your Account',
+            html: `
+            <h2>Verify Your Account</h2>
+            <p>Thank you for registering! To complete your account setup, please click the link below:</p>
+            <p><a href="${verificationUrl}" style="padding: 10px 15px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">Verify My Account</a></p>
+            <p>Or copy and paste this URL into your browser:</p>
+            <p>${verificationUrl}</p>
+            <p>This link will expire in 1 hour.</p>
+            <p>If you did not request this, please ignore this email.</p>
+          `
+        };
+
+        return emailClient.send(msg);
+    }
+
+    static async sendWelcomeEmail(user: { email: string, first_name: string }) {
+        const msg = {
+            to: user.email,
+            from: process.env.EMAIL_FROM,
+            subject: 'Welcome to Our Platform!',
+            html: `
+            <h2>Welcome ${user.first_name}!</h2>
+            <p>Your account has been successfully verified.</p>
+            <p>You can now enjoy all the features of our platform.</p>
+          `
+        };
+
+        return emailClient.send(msg);
+    }
+
+    static async sendPasswordChangeEmail(user: { email: string }) {
+        const msg = {
+            to: user.email,
+            from: process.env.EMAIL_FROM,
+            subject: 'Password Change',
+            html: `
+            <h2>Your password has been changed</h2>
+            <p>If you do not request this, please change your password again immediately or contact support for help.</p>
+          `
+        };
+
+        return emailClient.send(msg);
+    }
+
     static async initiateUserRegistration(req: Request, res: Response) {
         try {
             const { email, password, first_name, middle_name, last_name } = req.body;
@@ -75,7 +90,7 @@ export class AuthController {
                         }
                     });
 
-                    await sendVerificationEmail(email, verificationToken);
+                    await AuthController.sendVerificationEmail(email, verificationToken);
 
                     return res.status(200).json({
                         message: 'Registration initiated. Please check your email for verification link.',
@@ -102,7 +117,7 @@ export class AuthController {
                 }
             });
 
-            await sendVerificationEmail(email, verificationToken);
+            await AuthController.sendVerificationEmail(email, verificationToken);
 
             return res.status(201).json({
                 message: 'Registration initiated. Please check your email for verification link.',
@@ -149,7 +164,7 @@ export class AuthController {
                 jwtOptions
             );
 
-            await sendWelcomeEmail(user);
+            await AuthController.sendWelcomeEmail(user);
 
             return res.status(200).json({
                 message: 'Account verified successfully',
@@ -326,6 +341,42 @@ export class AuthController {
         } catch (error) {
             console.error('Password reset error:', error);
             return res.status(500).json({ message: 'Error resetting password' });
+        }
+    };
+
+    static async changePassword(req: Request, res: Response) {
+        try {
+            const { currentPassword, newPassword } = req.body;
+            const userId = req.user?.userId;
+
+            const user = await prisma.user.findUnique({
+                where: { id: userId }
+            });
+
+            if (!user) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+
+            const isPasswordValid = await compare(currentPassword, user.password_hash);
+            if (!isPasswordValid) {
+                return res.status(400).json({ message: 'Current password is incorrect' });
+            }
+
+            const hashedPassword = await hash(newPassword, 10);
+
+            await prisma.user.update({
+                where: { id: userId },
+                data: { password_hash: hashedPassword }
+            });
+
+            await AuthController.sendPasswordChangeEmail(user);
+
+            return res.json({
+                message: 'Password updated successfully'
+            });
+        } catch (error) {
+            console.error('Change password error:', error);
+            return res.status(500).json({ message: 'Error changing password' });
         }
     };
 }

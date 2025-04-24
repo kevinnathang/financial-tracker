@@ -56,6 +56,15 @@ const authService = {
             console.error('SERVICE - Error in resetPassword');
             throw error; 
         }
+    },
+
+    changePassword: async (currentPassword: string, newPassword: string) => {
+        try {
+            await api.post(`/auth/change-password`, {currentPassword, newPassword})
+        } catch (error) {
+            console.error('SERVICE - Error in changePassword');
+            throw error;
+        }
     }
 };
 

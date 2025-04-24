@@ -104,3 +104,16 @@ export const useVerifyUser = () => {
         }
     );
 };
+
+export const useChangePassword = () => {
+    return useMutation(
+        async (data: {currentPassword: string; newPassword: string}) => {
+            return await authService.changePassword(data.currentPassword, data.newPassword);
+        },
+        {
+            onError: () => {
+                console.error(`QUERY - Error using useChangePassword.`);
+            },  
+        }
+    );
+};
