@@ -14,13 +14,33 @@ export class UserController {
                 html: `
             <h2>Email Address Change</h2>
             <p>Thank you for using our services! This email is just to notify you that your email address was changed from ${currentUserEmail} to ${newEmail}.</p>
-            <p>If you did not make this change, please contact support for assistance.</p>
+            <p>If you did not make this change, please contact our support for assistance.</p>
           `
             };
 
             return emailClient.send(msg);
         } catch (error) {
             console.error('sendEmailChangeEmail error:', error);
+        }
+    }
+
+    static async sendDeleteAccountEmail(currentUserEmail: string) {
+        try {
+
+            const msg = {
+                to: currentUserEmail,
+                from: process.env.EMAIL_FROM,
+                subject: 'Your email address was changed',
+                html: `
+                        <h2>Your account was deleted.</h2>
+                        <p>This email is to notify you that your account has been successfully deleted.</p>
+                        <p>If you did not request this, please contact our support for assistance.</p>
+                    `
+            };
+
+            return emailClient.send(msg);
+        } catch (error) {
+            console.error('sendDeleteAccountEmail error:', error);
         }
     }
 
@@ -82,6 +102,8 @@ export class UserController {
                     id: id
                 }
             });
+
+            await UserController.sendDeleteAccountEmail(user.email)
 
             return res.json({ message: 'User deleted' });
         } catch (error) {
