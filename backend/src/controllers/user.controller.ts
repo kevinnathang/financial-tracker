@@ -5,20 +5,23 @@ import emailClient from '../config/email';
 
 export class UserController {
     static async sendEmailChangeEmail(currentUserEmail: string, newEmail: string) {
-        const baseUrl = 'localhost:3001';
+        try {
 
-        const msg = {
-            to: currentUserEmail,
-            from: process.env.EMAIL_FROM,
-            subject: 'Your email address was changed',
-            html: `
+            const msg = {
+                to: currentUserEmail,
+                from: process.env.EMAIL_FROM,
+                subject: 'Your email address was changed',
+                html: `
             <h2>Email Address Change</h2>
             <p>Thank you for using our services! This email is just to notify you that your email address was changed from ${currentUserEmail} to ${newEmail}.</p>
             <p>If you did not make this change, please contact support for assistance.</p>
           `
-        };
+            };
 
-        return emailClient.send(msg);
+            return emailClient.send(msg);
+        } catch (error) {
+            console.error('sendEmailChangeEmail error:', error);
+        }
     }
 
     static async getUser(req: Request, res: Response) {

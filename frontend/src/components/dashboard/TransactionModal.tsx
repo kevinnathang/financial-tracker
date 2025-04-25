@@ -24,13 +24,13 @@ import {
 } from '@chakra-ui/react';
 import { useCreateTransaction, useUpdateTransaction } from '../../hooks/transactionQueries';
 import { useTags } from '../../hooks/tagQueries';
-import { Transaction } from '../../services/transactionService';
+import { Transaction } from '../../types';
 import { toast } from 'react-toastify';
 
 interface TransactionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  transaction?: Transaction; 
+  transaction?: Transaction.Transaction; 
 }
 
 const TransactionModal: React.FC<TransactionModalProps> = ({ 

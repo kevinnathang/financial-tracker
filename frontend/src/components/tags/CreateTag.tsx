@@ -30,7 +30,7 @@ import {
 import * as Icons from 'react-icons/fi';
 import { useCreateTag, useTags, useDeleteTag, useUpdateTag } from '../../hooks/tagQueries';
 import { ChakraIcon } from '../ui/ChakraIcon';
-import { Tag } from '../../services/tagService';
+import { Tag } from '../../types';
 import { toast } from 'react-toastify';
 
 interface HSV {
@@ -219,7 +219,7 @@ const TagManagement: React.FC = () => {
   const [ icon, setIcon ] = useState('💵');
   const [ isSubmitting, setIsSubmitting ] = useState(false);
   const [ isEditModalOpen, setIsEditModalOpen ] = useState(false);
-  const [ selectedTag, setSelectedTag ] = useState<Tag | undefined>(undefined);
+  const [ selectedTag, setSelectedTag ] = useState<Tag.Tag | undefined>(undefined);
   const tagMutation = useCreateTag();
   const updateTagMutation = useUpdateTag();
   const { mutate: deleteTag } = useDeleteTag();
@@ -245,7 +245,7 @@ const TagManagement: React.FC = () => {
     deleteTag(tagId);
   };
 
-  const openEditModal = (tag: Tag) => {
+  const openEditModal = (tag: Tag.Tag) => {
     setSelectedTag(tag);
     setIsEditModalOpen(true);
   };

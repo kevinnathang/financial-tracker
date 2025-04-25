@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import prisma from "../lib/prisma";
 import { Prisma } from "@prisma/client";
-import { connect } from "http2";
 
 export class BudgetController {
     static async createBudget(req: Request, res: Response) {

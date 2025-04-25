@@ -1,11 +1,7 @@
 // src/hooks/transactionQueries.ts
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import transactionService, { 
-  TransactionPayload, 
-  TransactionListResponse,
-  MonthlyStats,
-  UpdateTransactionPayload
-} from '../services/transactionService';
+import transactionService  from '../services/transactionService';
+import { Transaction } from '../types';
 
 export const TRANSACTION_KEYS = {
   all: ['transactions'] as const,
@@ -16,7 +12,7 @@ export const TRANSACTION_KEYS = {
 
 export const useTransactions = () => {
 
-  return useQuery<TransactionListResponse, Error>(
+  return useQuery<Transaction.TransactionListResponse, Error>(
     TRANSACTION_KEYS.lists(),
     transactionService.getAllTransactions,
     {
@@ -29,7 +25,7 @@ export const useTransactions = () => {
 
 export const useMonthlyStats = () => {
 
-  return useQuery<MonthlyStats, Error>(
+  return useQuery<Transaction.MonthlyStats, Error>(
     TRANSACTION_KEYS.stats(),
     transactionService.getMonthlyStats,
     {
@@ -43,7 +39,7 @@ export const useMonthlyStats = () => {
 export const useCreateTransaction = () => {
   const queryClient = useQueryClient();
   
-  return useMutation<any, Error, TransactionPayload>(
+  return useMutation<any, Error, Transaction.TransactionPayload>(
     (transaction) => transactionService.createTransaction(transaction),
     {
       onSuccess: () => {
@@ -84,7 +80,7 @@ export const useDeleteTransaction = () => {
 export const useUpdateTransaction = () => {
   const queryClient = useQueryClient();
   
-  return useMutation<any, Error, UpdateTransactionPayload>(
+  return useMutation<any, Error, Transaction.UpdateTransactionPayload>(
     async ({ transactionId, ...transactionData }) => {
       const response = await transactionService.updateTransaction(transactionId, transactionData);
       return response;

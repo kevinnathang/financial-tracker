@@ -1,26 +1,6 @@
 // src/services/userService.ts
 import api from "./api";
-
-
-export interface User {
-  id: string;
-  email: string;
-  first_name: string;
-  middle_name: string;
-  last_name: string;
-  balance: number;
-}
-
-export interface UserPayload {
-    first_name: string;
-    middle_name: string;
-    last_name: string;
-    email: string;
-}
-
-export interface UpdateUserPayload extends UserPayload {
-  userId: string;
-}
+import { User } from '../../src/types'
 
 const userService = {
     getUser: async(id: string) => {
@@ -33,7 +13,7 @@ const userService = {
         }
     },
 
-    updateUser: async(userId: string, userData: UserPayload): Promise<any> => {
+    updateUser: async(userId: string, userData: User.UserPayload): Promise<any> => {
         try {
           const response = await api.patch(`/user/${userId}`, userData);
           return response.data

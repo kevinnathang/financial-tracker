@@ -1,10 +1,7 @@
 // src/hooks/budgetQueries.ts
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import budgetService, {
-  BudgetListResponse,
-  BudgetPayload,
-  UpdateBudgetPayload
-} from '../services/budgetService';
+import budgetService from '../services/budgetService';
+import { Budget } from '../types';
 
 export const BUDGET_KEYS = {
   all: ['budgets'] as const,
@@ -12,7 +9,7 @@ export const BUDGET_KEYS = {
 };
 
 export const useBudgets = () => {
-  return useQuery<BudgetListResponse, Error>(
+  return useQuery<Budget.BudgetListResponse, Error>(
     BUDGET_KEYS.lists(),
     budgetService.getAllBudgets,
     {
@@ -25,7 +22,7 @@ export const useBudgets = () => {
 export const useCreateBudget = () => {
   const queryClient = useQueryClient();
   
-  return useMutation<any, Error, BudgetPayload>(
+  return useMutation<any, Error, Budget.BudgetPayload>(
     (budget) => budgetService.createBudget(budget),
     {
       onSuccess: () => {
@@ -66,7 +63,7 @@ export const useDeleteBudget = () => {
 export const useUpdateBudget = () => {
   const queryClient = useQueryClient();
   
-  return useMutation<any, Error, UpdateBudgetPayload>(
+  return useMutation<any, Error, Budget.UpdateBudgetPayload>(
     async ({ budgetId, ...budgetData }) => {
       const response = await budgetService.updateBudget(budgetId, budgetData);
       return response;

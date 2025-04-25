@@ -33,7 +33,7 @@ import { useCreateBudget, useBudgets, useDeleteBudget, useUpdateBudget } from '.
 import { ChakraIcon } from '../ui/ChakraIcon';
 import { toast } from 'react-toastify';
 
-import { Budget } from '../../services/budgetService';
+import { Budget } from '../../types';
 
 const BudgetManagement: React.FC = () => {
   const { data, isLoading, isError } = useBudgets();
@@ -46,7 +46,7 @@ const BudgetManagement: React.FC = () => {
   const [description, setDescription] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedBudget, setSelectedBudget] = useState<Budget | undefined>(undefined);
+  const [selectedBudget, setSelectedBudget] = useState<Budget.Budget | undefined>(undefined);
   
   const budgetMutation = useCreateBudget();
   const updateBudgetMutation = useUpdateBudget();
@@ -73,7 +73,7 @@ const BudgetManagement: React.FC = () => {
     deleteBudget(budgetId);
   };
 
-  const openEditModal = (budget: Budget) => {
+  const openEditModal = (budget: Budget.Budget) => {
     setSelectedBudget(budget);
     setIsEditModalOpen(true);
   };

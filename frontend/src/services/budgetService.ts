@@ -1,43 +1,9 @@
 // src/services/budgetService.ts
 import api from './api';
-
-export interface Budget {
-  id: string;
-  user_id: string;
-  name: string;
-  amount: number;
-  period: string | null;
-  start_date: string | null;
-  end_date: string | null;
-  is_main: boolean;
-  description: string | null;
-}
-
-export interface BudgetListResponse {
-  budgets: Budget[];
-}
-
-export interface BudgetPayload {
-    name: string;
-    amount: number;
-    period: string | null;
-    start_date: Date | null;
-    end_date: Date | null;
-    is_main: boolean;
-    description: string | null;
-}
-
-export interface CreateBudgetResponse {
-  message: string;
-  budget: Budget;
-}
-
-export interface UpdateBudgetPayload extends BudgetPayload {
-  budgetId: string;
-}
+import { Budget } from '../types';
 
 export const budgetService = {
-    createBudget: async (budget: BudgetPayload): Promise<CreateBudgetResponse> => {
+    createBudget: async (budget: Budget.BudgetPayload): Promise<Budget.CreateBudgetResponse> => {
     try {
       const response = await api.post('/budget', budget);
       return response.data;
@@ -47,7 +13,7 @@ export const budgetService = {
     }
   },
 
-  getBudget: async (budgetId: string): Promise<Budget> => {
+  getBudget: async (budgetId: string): Promise<Budget.Budget> => {
     try {
         const response = await api.get(`/budget/${budgetId}`)
         return response.data
@@ -57,7 +23,7 @@ export const budgetService = {
     }
   },
   
-  getAllBudgets: async (): Promise<BudgetListResponse> => {
+  getAllBudgets: async (): Promise<Budget.BudgetListResponse> => {
     try {
       const response = await api.get('/budget');
       return response.data;
@@ -77,7 +43,7 @@ export const budgetService = {
     }
   },
 
-  updateBudget: async(budgetId: string, budgetData: BudgetPayload): Promise<any> => {
+  updateBudget: async(budgetId: string, budgetData: Budget.BudgetPayload): Promise<any> => {
     try {
       const response = await api.patch(`/budget/${budgetId}`, budgetData);
       return response.data

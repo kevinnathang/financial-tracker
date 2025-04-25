@@ -1,10 +1,7 @@
 // src/hooks/tagQueries.ts
 import { useQuery, useMutation, useQueryClient } from 'react-query';
-import tagService, {
-  TagListResponse,
-  TagPayload,
-  UpdateTagPayload
-} from '../services/tagService';
+import tagService from '../services/tagService';
+import { Tag } from '../types';
 
 export const TAG_KEYS = {
   all: ['tags'] as const,
@@ -12,7 +9,7 @@ export const TAG_KEYS = {
 };
 
 export const useTags = () => {
-  return useQuery<TagListResponse, Error>(
+  return useQuery<Tag.TagListResponse, Error>(
     TAG_KEYS.lists(),
     tagService.getAllTags,
     {
@@ -25,7 +22,7 @@ export const useTags = () => {
 export const useCreateTag = () => {
   const queryClient = useQueryClient();
   
-  return useMutation<any, Error, TagPayload>(
+  return useMutation<any, Error, Tag.TagPayload>(
     (tag) => tagService.createTag(tag),
     {
       onSuccess: () => {
@@ -66,7 +63,7 @@ export const useDeleteTag = () => {
 export const useUpdateTag = () => {
   const queryClient = useQueryClient();
   
-  return useMutation<any, Error, UpdateTagPayload>(
+  return useMutation<any, Error, Tag.UpdateTagPayload>(
     async ({ tagId, ...tagData }) => {
       const response = await tagService.updateTag(tagId, tagData);
       return response;

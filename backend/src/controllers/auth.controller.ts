@@ -10,25 +10,29 @@ import emailClient from '../config/email';
 
 export class AuthController {
     static async sendVerificationEmail(email: string, verificationToken: string) {
-        const baseUrl = 'localhost:3001';
-        const verificationUrl = `${baseUrl}/verify/${verificationToken}`;
+        try {
+            const baseUrl = 'localhost:3001';
+            const verificationUrl = `${baseUrl}/verify/${verificationToken}`;
 
-        const msg = {
-            to: email,
-            from: process.env.EMAIL_FROM,
-            subject: 'Verify Your Account',
-            html: `
-            <h2>Verify Your Account</h2>
-            <p>Thank you for registering! To complete your account setup, please click the link below:</p>
-            <p><a href="${verificationUrl}" style="padding: 10px 15px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">Verify My Account</a></p>
-            <p>Or copy and paste this URL into your browser:</p>
-            <p>${verificationUrl}</p>
-            <p>This link will expire in 1 hour.</p>
-            <p>If you did not request this, please ignore this email.</p>
-          `
-        };
+            const msg = {
+                to: email,
+                from: process.env.EMAIL_FROM,
+                subject: 'Verify Your Account',
+                html: `
+                <h2>Verify Your Account</h2>
+                <p>Thank you for registering! To complete your account setup, please click the link below:</p>
+                <p><a href="${verificationUrl}" style="padding: 10px 15px; background-color: #4CAF50; color: white; text-decoration: none; border-radius: 5px;">Verify My Account</a></p>
+                <p>Or copy and paste this URL into your browser:</p>
+                <p>${verificationUrl}</p>
+                <p>This link will expire in 1 hour.</p>
+                <p>If you did not request this, please ignore this email.</p>
+            `
+            };
 
-        return emailClient.send(msg);
+            return emailClient.send(msg);
+        } catch (error) {
+            console.error('sendVerificationEmail error:', error);
+        }
     }
 
     static async sendWelcomeEmail(user: { email: string, first_name: string }) {
@@ -47,17 +51,22 @@ export class AuthController {
     }
 
     static async sendPasswordChangeEmail(user: { email: string }) {
-        const msg = {
-            to: user.email,
-            from: process.env.EMAIL_FROM,
-            subject: 'Password Change',
-            html: `
-            <h2>Your password has been changed</h2>
-            <p>If you do not request this, please change your password again immediately or contact support for help.</p>
-          `
-        };
+        try {
 
-        return emailClient.send(msg);
+            const msg = {
+                to: user.email,
+                from: process.env.EMAIL_FROM,
+                subject: 'Password Change',
+                html: `
+                <h2>Your password has been changed</h2>
+                <p>If you do not request this, please change your password again immediately or contact support for help.</p>
+                `
+            };
+
+            return emailClient.send(msg);
+        } catch (error) {
+            console.error('sendPasswordChangeEmail error:', error);
+        }
     }
 
     static async initiateUserRegistration(req: Request, res: Response) {

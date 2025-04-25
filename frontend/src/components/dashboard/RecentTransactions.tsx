@@ -5,13 +5,13 @@ import { useHistory } from 'react-router-dom';
 import { ChakraIcon } from '../ui/ChakraIcon';
 import { useTransactions, useDeleteTransaction } from '../../hooks/transactionQueries';
 import TransactionModal from './TransactionModal';
-import { Transaction } from '../../services/transactionService';
+import { Transaction } from '../../types';
 
 const RecentTransactions: React.FC = () => {
   const history = useHistory();
   const { data, isLoading, isError } = useTransactions();
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | undefined>(undefined);
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction.Transaction | undefined>(undefined);
   const { mutate: deleteTransaction } = useDeleteTransaction();
   
   const openModal = () => {
@@ -19,7 +19,7 @@ const RecentTransactions: React.FC = () => {
     setIsModalOpen(true);
   };
   
-  const openUpdateModal = (transaction: Transaction) => {
+  const openUpdateModal = (transaction: Transaction.Transaction) => {
     setSelectedTransaction(transaction);
     setIsModalOpen(true);
   };
