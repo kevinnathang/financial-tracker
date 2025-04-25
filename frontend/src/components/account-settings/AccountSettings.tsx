@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Box,
   Button,
@@ -11,11 +11,19 @@ import {
   Spinner,
   Text,
   Divider,
-  Heading
+  Heading,
+  useDisclosure,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader
 } from '@chakra-ui/react';
-import { useUserData, useUpdateUser } from '../../hooks/userQueries';
+import { useUserData, useUpdateUser, useDeleteUser } from '../../hooks/userQueries';
 import { toast } from 'react-toastify';
 import { useChangePassword } from '../../hooks/authQueries';
+import { useHistory } from 'react-router-dom';
 
 const UserAccountSettings: React.FC = () => {
   type FormField = 'first_name' | 'middle_name' | 'last_name' | 'email' | 'currentPassword' | 'newPassword' | 'confirmPassword';
@@ -29,6 +37,16 @@ const UserAccountSettings: React.FC = () => {
   const [isChangingPassword, setIsChangingPassword] = useState(false);
 
   const updateUserMutation = useUpdateUser();
+  const deleteUserMutation = useDeleteUser();
+
+  const history = useHistory();
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = useRef<HTMLButtonElement>(null);
+
+  const confirmDeleteAccount = () => {
+    onOpen();
+  };
   
   const [formData, setFormData] = useState({
     first_name: '',
@@ -146,6 +164,19 @@ const UserAccountSettings: React.FC = () => {
       setIsChangingPassword(false);
     }
   };
+
+  const handleDeleteAccount = async () => {
+    try {
+      await deleteUserMutation.mutateAsync(currentUserId)
+      toast.success('Your account has been deleted');
+      history.push('/login')
+    } catch (error) {
+      console.error("Failed to delete account:", error)
+      toast.error('Failed to delete account');
+    } finally {
+      onClose();
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -307,6 +338,47 @@ const UserAccountSettings: React.FC = () => {
           </HStack>
         </VStack>
       </form>
+      <HStack justifyContent="flex-end" pt={4}>
+        <Button 
+          colorScheme="red"
+          type="button"
+          onClick={confirmDeleteAccount}
+          loadingText="Deleting"
+        >
+          Delete Account
+        </Button>
+      </HStack>
+      <AlertDialog
+        isOpen={isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Delete Account
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Are you sure you want to delete your account? This action cannot be undone.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onClose}>
+                Cancel
+              </Button>
+              <Button 
+                colorScheme="red" 
+                onClick={handleDeleteAccount} 
+                ml={3}
+                isLoading={deleteUserMutation.isLoading}
+              >
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Box>
   );
 };

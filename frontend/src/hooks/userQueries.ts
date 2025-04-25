@@ -38,3 +38,20 @@ export const useUpdateUser = () => {
     }
   );
 };
+
+export const useDeleteUser = () => {
+  const queryClient = useQueryClient();
+  
+  return useMutation<any, Error, string>(
+    (id: string) => userService.deleteUser(id),
+    {
+      onSuccess: () => {
+        queryClient.invalidateQueries('userData');
+        localStorage.removeItem('user')
+      },
+      onError: (error, id) => {
+        console.error(`QUERY - Error deleting user with ID: ${id}`);
+      },
+    }
+  );
+};

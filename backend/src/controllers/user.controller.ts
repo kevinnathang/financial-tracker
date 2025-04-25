@@ -63,16 +63,23 @@ export class UserController {
 
     static async deleteUser(req: Request, res: Response) {
         try {
+            const { id } = req.params
+
             const user = await prisma.user.findUnique({
                 where: { id: req.user?.userId },
             });
+
             if (!user) {
                 return res.status(404).json({ message: 'User not found' });
             }
 
+            if (id !== user.id) {
+                return res.status(403).json({ message: 'Cannot delete this user' })
+            }
+
             await prisma.user.delete({
                 where: {
-                    id: req.user?.userId
+                    id: id
                 }
             });
 

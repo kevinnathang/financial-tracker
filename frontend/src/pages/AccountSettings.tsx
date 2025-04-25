@@ -1,7 +1,7 @@
 import React from 'react';
 import { Grid, GridItem } from '@chakra-ui/react';
 import DashboardLayout from '../components/layout/DashboardLayout';
-import UserAccountSettings from '../components/account-settings/UpdateAccount';
+import UserAccountSettings from '../components/account-settings/AccountSettings';
 
 const AccountSettings: React.FC = () => {
   
